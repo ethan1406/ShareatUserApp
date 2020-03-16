@@ -1,0 +1,840 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"dark",
+				"darkGray"
+			],
+			[
+				"pri",
+				"primaryColor"
+			],
+			[
+				"Q",
+				"QRCodeScanner"
+			],
+			[
+				"al",
+				"alignSelf"
+			],
+			[
+				"user",
+				"userRewardsView"
+			],
+			[
+				"rewa",
+				"rewardData"
+			],
+			[
+				"rew",
+				"rewardData"
+			],
+			[
+				"rewar",
+				"rewardData"
+			],
+			[
+				"con",
+				"console"
+			],
+			[
+				"vis",
+				"visitsByRange"
+			],
+			[
+				"order",
+				"orderedAllVisits"
+			],
+			[
+				"perio",
+				"periodRangeFormat"
+			],
+			[
+				"grou",
+				"groupBy"
+			],
+			[
+				"ama",
+				"amazonUserSub"
+			],
+			[
+				"marg",
+				"marginTop"
+			],
+			[
+				"text",
+				"textAlign"
+			],
+			[
+				"Lan",
+				"LandingScreen"
+			],
+			[
+				"margin",
+				"marginBottom"
+			],
+			[
+				"ta",
+				"tableNumber"
+			],
+			[
+				"tab",
+				"tableData"
+			],
+			[
+				"active",
+				"activeParties"
+			],
+			[
+				"Tab",
+				"TableScreen"
+			],
+			[
+				"color",
+				"colorIndex"
+			],
+			[
+				"set",
+				"setState"
+			],
+			[
+				"render",
+				"renderQRScanner"
+			],
+			[
+				"T",
+				"TouchableWithoutFeedback"
+			],
+			[
+				"err",
+				"errMessage"
+			],
+			[
+				"res",
+				"response"
+			],
+			[
+				"part",
+				"partyId"
+			],
+			[
+				"Check",
+				"CheckNavigator"
+			],
+			[
+				"Rewar",
+				"RewardAccumulationScreen"
+			],
+			[
+				"back",
+				"backgroundColor"
+			],
+			[
+				"te",
+				"Text"
+			],
+			[
+				"re",
+				"restaurantName"
+			],
+			[
+				"indivi",
+				"individualPrice"
+			],
+			[
+				"ri",
+				"rightText"
+			],
+			[
+				"cust",
+				"customTipString"
+			],
+			[
+				"padding",
+				"paddingVertical"
+			],
+			[
+				"_s",
+				"_searchArea"
+			],
+			[
+				"sty",
+				"styles"
+			],
+			[
+				"Tou",
+				"TouchableOpacity"
+			],
+			[
+				"scre",
+				"screenWidth"
+			],
+			[
+				"inde",
+				"indexToRemove"
+			],
+			[
+				"update",
+				"updatedColorMap"
+			],
+			[
+				"colo",
+				"colorMap"
+			],
+			[
+				"erro",
+				"errorMessage"
+			],
+			[
+				"sear",
+				"searchString"
+			],
+			[
+				"valida",
+				"validateEmail"
+			],
+			[
+				"last",
+				"lastName"
+			],
+			[
+				"firs",
+				"firstName"
+			],
+			[
+				"se",
+				"second_layer_out"
+			],
+			[
+				"fir",
+				"first_layer"
+			],
+			[
+				"sec",
+				"second_layer"
+			],
+			[
+				"first",
+				"first_layer_out"
+			],
+			[
+				"table",
+				"tableNum"
+			],
+			[
+				"tabe",
+				"tableNumber"
+			],
+			[
+				"data",
+				"data_paths"
+			],
+			[
+				"app",
+				"appendUrl"
+			],
+			[
+				"feature",
+				"features_test"
+			],
+			[
+				"feat",
+				"features_test_array"
+			],
+			[
+				"clos",
+				"closestDistances"
+			],
+			[
+				"trn",
+				"trn_feat"
+			],
+			[
+				"num",
+				"num_fold"
+			],
+			[
+				"req",
+				"require"
+			],
+			[
+				"menu",
+				"menutype"
+			],
+			[
+				"__",
+				"__diners"
+			],
+			[
+				"Menu",
+				"MenuItem"
+			],
+			[
+				"M",
+				"MENU_ITEM_TYPES"
+			],
+			[
+				"arra2",
+				"array2"
+			],
+			[
+				"goal",
+				"goal_y"
+			],
+			[
+				"parti",
+				"particle_filter"
+			],
+			[
+				"pr",
+				"props\tReact: this.props"
+			],
+			[
+				"matc",
+				"matchNotifications"
+			],
+			[
+				"math",
+				"matchNotifications"
+			],
+			[
+				"frien",
+				"friendPending"
+			],
+			[
+				"pe",
+				"pendingNotifications"
+			],
+			[
+				"alrea",
+				"alreadyExisted"
+			],
+			[
+				"friend",
+				"FriendList"
+			],
+			[
+				"new",
+				"newUser"
+			],
+			[
+				"click",
+				"clickHandler"
+			],
+			[
+				"get",
+				"getElementById"
+			],
+			[
+				"class",
+				"className"
+			],
+			[
+				"rc",
+				"rcc\tReact: legacy component"
+			],
+			[
+				"r",
+				"rcc\tReact: class component"
+			],
+			[
+				"square",
+				"squares"
+			],
+			[
+				"contest",
+				"contestId"
+			],
+			[
+				"Contes",
+				"contestId"
+			],
+			[
+				"cur",
+				"currentContestId"
+			],
+			[
+				"current",
+				"currentContestId"
+			],
+			[
+				"fetchcon",
+				"fetchContestList"
+			],
+			[
+				"api",
+				"apiData"
+			],
+			[
+				"contst",
+				"contests"
+			],
+			[
+				"ini",
+				"initialData"
+			],
+			[
+				"conts",
+				"contestId"
+			],
+			[
+				"prop",
+				"propTypes"
+			],
+			[
+				"curre",
+				"currentContest"
+			],
+			[
+				"Cont",
+				"ContestList"
+			],
+			[
+				"ptn",
+				"ptn\tReact: PropTypes.number"
+			],
+			[
+				"pn",
+				"ptn\tReact: PropTypes.number"
+			],
+			[
+				"on",
+				"onContestClick"
+			],
+			[
+				"clas",
+				"className"
+			],
+			[
+				"React",
+				"ReactDomServer"
+			],
+			[
+				"Contest",
+				"ContestPreview"
+			],
+			[
+				"prin",
+				"printName"
+			],
+			[
+				"ws",
+				"ws"
+			],
+			[
+				"skie",
+				"skierTerms"
+			],
+			[
+				"d",
+				"dictionary-api"
+			],
+			[
+				"ski",
+				"skierTerms"
+			],
+			[
+				"body",
+				"bodyParser"
+			],
+			[
+				"bod",
+				"bodyParser"
+			],
+			[
+				"li",
+				"listOnBackOrder"
+			],
+			[
+				"list",
+				"listInStock"
+			],
+			[
+				"cr",
+				"createReadStream"
+			],
+			[
+				"sayin",
+				"sayings"
+			],
+			[
+				"real",
+				"realPerson"
+			],
+			[
+				"wa",
+				"waitTime"
+			],
+			[
+				"wr",
+				"writingWaitingPercent"
+			],
+			[
+				"wait",
+				"waitInterval"
+			],
+			[
+				"pro",
+				"process"
+			],
+			[
+				"j",
+				"justNode"
+			],
+			[
+				"fun",
+				"function"
+			],
+			[
+				"send",
+				"sendFile"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 345.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"pretty",
+				"Pretty JSON: Format and Sort JSON"
+			],
+			[
+				"prett",
+				"Pretty JSON: Format (Pretty Print) JSON"
+			],
+			[
+				"pret",
+				"Pretty JSON: Format (Pretty Print) JSON"
+			],
+			[
+				"inst",
+				"Package Control: Install Package"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"remo",
+				"Package Control: Remove Package"
+			],
+			[
+				"isnta",
+				"Package Control: Install Package"
+			],
+			[
+				"remove",
+				"Package Control: Remove Package"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"pac",
+				"Package Control: Install Package"
+			],
+			[
+				"pack",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 448.0
+	},
+	"console":
+	{
+		"height": 130.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/Users/EthanChang/Developer/shareatproject/Shareat/.gitignore",
+		"/Users/EthanChang/Developer/shareatproject/Shareat/.flowconfig",
+		"/Users/EthanChang/Developer/shareatproject/Shareat/app/RestaurantScreen.js",
+		"/Users/EthanChang/Developer/shareatproject/Shareat/app/CheckSplitScreen.js",
+		"/Users/EthanChang/Developer/shareatproject/Shareat/app/RewardsScreen.js",
+		"/Users/EthanChang/Developer/shareatproject/Shareat/app/AddPaymentMethodScreen.js",
+		"/Users/EthanChang/Developer/shareatproject/Shareat/app/FirstScreen.js",
+		"/Users/EthanChang/Developer/shareatproject/Shareat/app/OptionsScreen.js",
+		"/Users/EthanChang/Developer/shareatproject/Shareat/app/OrderBuyerScreen.js",
+		"/Users/EthanChang/Developer/shareatproject/Shareat/app/TermsOfUseScreen.js",
+		"/Users/EthanChang/Developer/shareatproject/Shareat/app/SignupScreen.js",
+		"/Users/EthanChang/Developer/shareatproject/Shareat/app/PaymentMethodsScreen.js",
+		"/Users/EthanChang/Developer/shareatproject/Shareat/app/App.js",
+		"/Users/EthanChang/Developer/shareatproject/Shareat/app/RewardAccumulationScreen.js",
+		"/Users/EthanChang/Developer/shareatproject/Shareat/ios/Podfile",
+		"/Users/EthanChang/Developer/shareatproject/Shareat/app/components/OrderListItem.js",
+		"/Users/EthanChang/Developer/shareatproject/ShareatBackend/models/user.js",
+		"/Users/EthanChang/Developer/shareatproject/ShareatBackend/server.js",
+		"/Users/EthanChang/Developer/shareatproject/ShareatBackend/config/auth.js",
+		"/Users/EthanChang/Developer/shareatproject/ShareatBackend/routes/user_routes.js",
+		"/Users/EthanChang/Developer/shareatproject/ShareatBackend/config.js",
+		"/Users/EthanChang/Developer/shareatproject/ShareatBackend/config/passport.js",
+		"/Users/EthanChang/Developer/shareatproject/ShareatBackend/routes/merchant_routes.js",
+		"/Users/EthanChang/Developer/shareatproject/ShareatBackend/package.json",
+		"/Users/EthanChang/Documents/projects/shareatproject/ShareatRestaurant/app/screens/LoginScreen.js",
+		"/Users/EthanChang/Documents/projects/shareatproject/ShareatRestaurant/app/screens/LandingScreenTab.js",
+		"/Users/EthanChang/Documents/projects/shareatproject/ShareatRestaurant/app/screens/LandingScreen.js",
+		"/Users/EthanChang/Documents/projects/shareatproject/ShareatRestaurant/app/screens/PartyDetailScreen.js",
+		"/Users/EthanChang/Documents/projects/shareatproject/ShareatRestaurant/package.json",
+		"/Users/EthanChang/Documents/projects/shareatproject/ShareatRestaurant/app/App.js",
+		"/Users/EthanChang/Documents/projects/shareatproject/ShareatRestaurant/node_modules/react-native/Libraries/vendor/emitter/EventEmitter.js",
+		"/Users/EthanChang/Documents/projects/shareatproject/ShareatRestaurant/node_modules/event-target-shim/lib/event-target.js",
+		"/Users/EthanChang/Documents/projects/shareatproject/ShareatRestaurant/app/models/Party.js",
+		"/Users/EthanChang/Documents/projects/shareatproject/ShareatRestaurant/app/Constants.js",
+		"/Users/EthanChang/Documents/projects/shareatproject/ShareatBackend/models/user.js",
+		"/Users/EthanChang/Documents/projects/shareatproject/ShareatBackend/server.js",
+		"/Users/EthanChang/Documents/projects/shareatproject/ShareatBackend/models/merchant.js",
+		"/Users/EthanChang/Documents/projects/shareatproject/ShareatBackend/config/passport.js",
+		"/Users/EthanChang/Documents/projects/shareatproject/ShareatRestaurant/App.js",
+		"/Users/EthanChang/Documents/projects/shareatproject/ShareatRestaurant/.eslintrc.js",
+		"/Users/EthanChang/Documents/projects/shareatproject/ShareatRestaurant/module.exports",
+		"/Users/EthanChang/Documents/projects/shareatproject/ShareatRestaurant/=",
+		"/Users/EthanChang/Documents/projects/shareatproject/ShareatRestaurant/{",
+		"/Users/EthanChang/Documents/projects/shareatproject/Shareat/.eslintrc.js",
+		"/Users/EthanChang/Documents/projects/shareatproject/Shareat/app/SignupScreen.js",
+		"/Users/EthanChang/Documents/projects/shareatproject/Shareat/app/OrderBuyerScreen.js",
+		"/Users/EthanChang/Documents/projects/shareatproject/Shareat/app/FirstScreen.js",
+		"/Users/EthanChang/Documents/projects/shareatproject/Shareat/app/QrCodeScreen.js",
+		"/Users/EthanChang/Documents/projects/shareatproject/Shareat/app/LoginScreen.js",
+		"/Users/EthanChang/Documents/projects/shareatproject/Shareat/app/RecentOrderScreen.js",
+		"/Users/EthanChang/Documents/projects/shareatproject/Shareat/app/ReceiptScreen.js",
+		"/Users/EthanChang/Documents/projects/shareatproject/Shareat/app/components/OrderListItem.js",
+		"/Users/EthanChang/Documents/projects/shareatproject/Shareat/app/ConfirmationScreen.js",
+		"/Users/EthanChang/Documents/projects/shareatproject/Shareat/app/CheckSplitScreen.js",
+		"/Users/EthanChang/Documents/projects/shareatproject/Shareat/app/RewardsScreen.js",
+		"/Users/EthanChang/Documents/projects/shareatproject/Shareat/app/OptionsScreen.js",
+		"/Users/EthanChang/Documents/projects/shareatproject/Shareat/app/RewardAccumulationScreen.js",
+		"/Users/EthanChang/Documents/projects/shareatproject/Shareat/ios/Pods/boost-for-react-native/boost/bind/mem_fn_vw.hpp",
+		"/Users/EthanChang/Documents/projects/shareatproject/Shareat/app/RestaurantScreen.js",
+		"/Users/EthanChang/Documents/projects/shareatproject/Shareat/app/App.js",
+		"/Users/EthanChang/Documents/projects/shareatproject/Shareat/app/MapScreen.js",
+		"/Users/EthanChang/Documents/projects/shareatproject/Shareat/node_modules/react-native/Libraries/Components/Touchable/Touchable.js",
+		"/Users/EthanChang/Documents/projects/shareatproject/Shareat/app/PaymentMethodsScreen.js",
+		"/Users/EthanChang/Documents/projects/shareatproject/Shareat/ios/Shareat/Info.plist",
+		"/Users/EthanChang/Downloads/assignment 7/wave.py",
+		"/Users/EthanChang/Downloads/assignment 7/consts.py",
+		"/Users/EthanChang/Downloads/assignment 7/models.py",
+		"/Users/EthanChang/Downloads/assignment 7/app.py",
+		"/Users/EthanChang/Downloads/wave.py",
+		"/Users/EthanChang/Downloads/models.py",
+		"/Users/EthanChang/Documents/projects/Robotics-Backend/visualizeData/urls.py",
+		"/Users/EthanChang/Documents/projects/Robotics-Backend/visualizeData/models.py",
+		"/Users/EthanChang/Documents/projects/Robotics-Backend/visualizeData/tests.py",
+		"/Users/EthanChang/Downloads/testing.json",
+		"/Users/EthanChang/Downloads/yelp_academic_dataset_business 2.json",
+		"/Users/EthanChang/Downloads/yelp_academic_dataset_business.json",
+		"/Users/EthanChang/Documents/projects/shareatproject/shareat/server.js",
+		"/Users/EthanChang/Downloads/Lab-3-Logistic-Regression.ipynb",
+		"/Users/EthanChang/Desktop/usc stuff/sad/hw_ethanc/project3/dnn_mlp.py",
+		"/Users/EthanChang/Desktop/usc stuff/sad/hw_ethanc/project3/t-SNE raw MNIST.png",
+		"/Users/EthanChang/Desktop/usc stuff/sad/hw_ethanc/project3/Minibatch_Gradient_Descent_lr0.01_m0.0_w0.001.json",
+		"/Users/EthanChang/Desktop/usc stuff/sad/hw_ethanc/project3/mnist_subset.json",
+		"/Users/EthanChang/Documents/projects/shareatproject/SharEatsFrontend/SharEats/Podfile",
+		"/Users/EthanChang/Desktop/usc stuff/sad/hw_ethanc/project2/test_accuracies.json",
+		"/Users/EthanChang/.bash_profile",
+		"/Users/EthanChang/.bashrc",
+		"/Users/EthanChang/Documents/projects/Robotics-Frontend/package.js",
+		"/Users/EthanChang/Documents/projects/Robotics-Backend/.gitignore",
+		"/Users/EthanChang/Documents/projects/Robotics-Backend/test.py",
+		"/Users/EthanChang/Documents/projects/shareatproject/information.txt",
+		"/Users/EthanChang/node projects/mern/server",
+		"/Users/EthanChang/Desktop/usc stuff/sad/hw_ethanc/.gitignore",
+		"/Users/EthanChang/Desktop/usc stuff/sad/hw_ethanc/test_accuracies.json",
+		"/Users/EthanChang/Desktop/usc stuff/sad/hw_ethanc/cv_accuracies.json",
+		"/Users/EthanChang/Desktop/usc stuff/sad/hw_ethanc/classifier.py",
+		"/Users/EthanChang/Desktop/usc stuff/sad/hw_ethanc/utils.py",
+		"/Users/EthanChang/Desktop/usc stuff/sad/hw_ethanc/knn.py",
+		"/Users/EthanChang/bash.profile",
+		"/Users/EthanChang/Documents/projects/Robotics-Backend/robotics-temp/src/App.js",
+		"/Users/EthanChang/Documents/projects/Robotics-Frontend/src/index.js",
+		"/Users/EthanChang/Documents/projects/Human-Robotics/robotics/robotics/urls.py",
+		"/Users/EthanChang/Documents/projects/Human-Robotics/robotics/robotics/settings.py",
+		"/Users/EthanChang/Documents/projects/Robotics-Backend/robotics-temp/package.json",
+		"/Users/EthanChang/Documents/projects/Robotics-Backend/manage.py",
+		"/Users/EthanChang/Documents/projects/Robotics-Backend/robotics-temp/package",
+		"/Users/EthanChang/node projects/mern/src/components/ContestPreview.js",
+		"/Users/EthanChang/Downloads/35057062.ris",
+		"/Users/EthanChang/node projects/refriend/server.js",
+		"/Users/EthanChang/Documents/projects/stripe-connect-rocketrides/server/models/passenger.js",
+		"/Users/EthanChang/Documents/projects/stripe-connect-rocketrides/server/routes/pilots/pilots.js",
+		"/Users/EthanChang/Documents/projects/stripe-connect-rocketrides/server/routes/api/rides.js",
+		"/Users/EthanChang/Documents/projects/stripe-connect-rocketrides/server/routes/api/passengers.js",
+		"/Users/EthanChang/Documents/projects/stripe-connect-rocketrides/server/models/pilot.js",
+		"/Users/EthanChang/Documents/projects/stripe-connect-rocketrides/server/routes/pilots/stripe.js",
+		"/Users/EthanChang/Documents/projects/stripe-connect-rocketrides/server/models/ride.js",
+		"/Users/EthanChang/Documents/projects/stripe-connect-rocketrides/server/config.js",
+		"/Users/EthanChang/Documents/projects/stripe-connect-rocketrides/server/app.js",
+		"/Users/EthanChang/Documents/projects/stripe-connect-rocketrides/server/node_modules/stripe/test/flows.spec.js",
+		"/Users/EthanChang/Documents/projects/stripe-connect-rocketrides/server/node_modules/stripe/README.md",
+		"/Users/EthanChang/Documents/projects/stripe-connect-rocketrides/server/config.default.js",
+		"/Users/EthanChang/Documents/projects/stripe-connect-rocketrides/server/routes/api/settings.js",
+		"/Users/EthanChang/Documents/projects/shareat/package.json",
+		"/Users/EthanChang/Documents/projects/shareat/server.js",
+		"/Users/EthanChang/Documents/robotics/Lab6and7Ethan/pa2.py",
+		"/Users/EthanChang/Documents/robotics/Lab6and7Ethan/particle_filter.py",
+		"/Users/EthanChang/Documents/robotics/Lab6and7Ethan/lab10.py",
+		"/Users/EthanChang/Documents/robotics/Lab6and7Ethan/lab8.py",
+		"/Users/EthanChang/Documents/robotics/Lab6and7Ethan/lab7a.py"
+	],
+	"find":
+	{
+		"height": 28.0
+	},
+	"find_in_files":
+	{
+		"height": 158.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": true,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 28.0
+	},
+	"input":
+	{
+		"height": 66.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.SublimeLinter":
+	{
+		"height": 0.0
+	},
+	"output.SublimeLinter Messages":
+	{
+		"height": 132.0
+	},
+	"output.exec":
+	{
+		"height": 210.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "App.sublime-project",
+	"replace":
+	{
+		"height": 52.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"",
+				"~/node projects/Ex_Files_Nodejs_EssT/Exercise Files/Ch06/06_01/finished/request.js"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 216.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

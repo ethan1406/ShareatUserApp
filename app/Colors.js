@@ -1,0 +1,10 @@
+export const primaryColor = '#ffa91f';
+export const secondaryColor = '#f9f9f9';
+export const darkGray = '#848484';
+export const pink = 'pink';
+export const red = '#F3A545';
+export const lightPink = '#f85457';
+export const purple = '#009cff';
+export const blue = '#f85457';
+export const turquoise = '#a0d6b4';
+export const green = '#00954A';
