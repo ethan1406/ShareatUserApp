@@ -64,11 +64,9 @@ import {headerFontSize} from './Dimensions';
         },
         headerTintColor: darkGray,
         headerTitleStyle: {
-          marginTop:5,
           fontSize: headerFontSize, 
-          textAlign:'center', 
-          flex:1 ,
-        }
+        },
+        headerTitleAlign: 'center'
       };
     }
 

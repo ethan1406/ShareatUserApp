@@ -33,19 +33,15 @@ export default class RestaurantScreen extends Component<Props> {
              <Image style={{height: 30, width: 30, marginLeft: 20, tintColor: primaryColor}} source={require('./img/backbtn.png')} />
           </TouchableOpacity>
         ),
-      headerRight:( 
-              <View />
-            ),
       title: navigation.state.params.restaurantName,
       headerStyle: {
         backgroundColor: secondaryColor,
       },
       headerTintColor: darkGray,
       headerTitleStyle: {
-        fontSize: headerFontSize, 
-        textAlign:'center', 
-        flex:1 ,
-      } 
+        fontSize: headerFontSize
+      },
+      headerTitleAlign: 'center'
     };
   }
 

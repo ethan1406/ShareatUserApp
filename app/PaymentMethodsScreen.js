@@ -6,7 +6,8 @@ import {Text, View, TouchableOpacity, Image, ScrollView, StyleSheet} from 'react
 import {baseURL} from './Constants';
 import axios from 'axios';
 import AsyncStorage from '@react-native-community/async-storage';
-import {primaryColor, secondaryColor} from './Colors';
+import {primaryColor, secondaryColor, darkGray} from './Colors';
+import {headerFontSize} from './Dimensions';
 type Props = {};
 
 
@@ -45,19 +46,15 @@ export default class PaymentMethodsScreen extends Component<Props> {
                  <Image style={{height: 30, width: 30, marginLeft: 20, tintColor: primaryColor}} source={require('./img/backbtn.png')} />
               </TouchableOpacity>
             ),
-            headerRight:( 
-              <View />
-            ),
             title: 'Payment Method',
             headerStyle: {
                 backgroundColor: secondaryColor,
             },
-            headerTintColor: primaryColor,
+            headerTintColor: darkGray,
             headerTitleStyle: {
-                fontSize: 20, 
-                textAlign:'center', 
-                flex:1 ,
-            } 
+                fontSize: headerFontSize
+            },
+            headerTitleAlign: 'center'
         };
     }
 

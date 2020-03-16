@@ -6,10 +6,10 @@ import {Platform, StyleSheet, Text, View, TouchableOpacity,
   Image, ScrollView, FlatList, Dimensions} from 'react-native';
 
 import AsyncStorage from '@react-native-community/async-storage';
-
 import axios from 'axios';
-
 import {baseURL} from './Constants';
+import {primaryColor, secondaryColor, darkGray} from './Colors';
+import {headerFontSize} from './Dimensions';
 
 
 type Props = {};
@@ -62,16 +62,25 @@ export default class ReceiptScreen extends Component<Props> {
     this.setState({colorMap: {}});
   }
 
+
   static navigationOptions = ({navigation}) => {
-    return {
-      headerLeft:( 
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-           <Image style={{height: 30, width: 30, marginLeft: 20}} source={require('./img/backbtn.png')} />
-        </TouchableOpacity>
-      ),
-      title: 'Order Receipt',
-    };
-  }
+        return{
+            headerLeft:(
+              <TouchableOpacity onPress={() => navigation.goBack(null)}>
+                 <Image style={{height: 30, width: 30, marginLeft: 20, tintColor: primaryColor}} source={require('./img/backbtn.png')} />
+              </TouchableOpacity>
+            ),
+            title: 'Order Receipt',
+            headerStyle: {
+                backgroundColor: secondaryColor,
+            },
+            headerTintColor: darkGray,
+            headerTitleStyle: {
+                fontSize: headerFontSize,
+            },
+            headerTitleAlign: 'center'
+        };
+    }
 
   _keyExtractor = (item) => item._id
 

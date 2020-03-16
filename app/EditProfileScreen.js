@@ -6,7 +6,8 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview'
 import AsyncStorage from '@react-native-community/async-storage';
 import SafeAreaView from 'react-native-safe-area-view';
 import { Auth } from 'aws-amplify';
-import {HeaderBackButton} from 'react-navigation';
+import {primaryColor, secondaryColor, darkGray} from './Colors';
+import {headerFontSize} from './Dimensions';
 
 type props = {};
 
@@ -29,19 +30,20 @@ export default class EditProfileScreen extends Component<props> {
     }
 
     static navigationOptions = ({navigation}) => {
-        return{
-            headerRight: (
-                <View/>
+        return {
+            headerLeft:( 
+              <TouchableOpacity onPress={() => navigation.goBack(null)}>
+                 <Image style={{height: 30, width: 30, marginLeft: 20, tintColor: primaryColor}} source={require('./img/backbtn.png')} />
+              </TouchableOpacity>
             ),
             title: 'Edit Profile',
             headerStyle: {
-                backgroundColor: '#ffa91f',
+                backgroundColor: secondaryColor,
             },
-            headerTintColor: 'white',
+            headerTitleAlign: 'center',
+            headerTintColor: darkGray,
             headerTitleStyle: {
-                fontSize: 18, 
-                textAlign:"center", 
-                flex:1 ,
+                fontSize: headerFontSize, 
             } 
         };
     }
@@ -101,9 +103,6 @@ try {
     const test = await Auth.changePassword(user, 
         this.state.oldPwd, this.state.newPwd
         );
-    console.log('hahahahaha');
-    console.log(test);
-    console.log('hahahahaha');
     this.setState({errorMessage: 'saved successfully!', 'messageColor': 'green'});
 } catch(err) {
     console.log(err);

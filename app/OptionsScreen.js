@@ -76,14 +76,12 @@ import {headerFontSize} from './Dimensions';
       headerStyle: {
         backgroundColor: secondaryColor,
       },
-      title: 'Profile',
+      headerTitle: 'Profile',
       headerTintColor: darkGray,
       headerTitleStyle: {
-        marginTop:5,
         fontSize: headerFontSize, 
-        textAlign:'center', 
-        flex:1 ,
-      }
+      },
+      headerTitleAlign: 'center'
     };
   }
 
@@ -92,10 +90,10 @@ import {headerFontSize} from './Dimensions';
       <ScrollView resizeMode='contain' contentContainerStyle={styles.container}>
         <StatusBar
           backgroundColor= {secondaryColor}
-          barStyle="light-content"
+          barStyle="dark-content"
         />
         <TouchableOpacity style={{paddingTop: 20}} onPress={()=> {this.props.navigation.navigate('EditProfile');}}>
-          <Image style={styles.profile} source={require('./img/defaultUserFemale.png')} />
+          <Image style={styles.profile} source={require('./img/ic_user.png')} />
         </TouchableOpacity>
         <Text style={styles.name}> {this.state.firstName} </Text>
         <Text style={styles.email}> {this.state.email} </Text>

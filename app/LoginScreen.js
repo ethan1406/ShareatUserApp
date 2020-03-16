@@ -1,7 +1,7 @@
 'use strict';
 
 import React, {Component} from 'react';
-import {StyleSheet, Text, View, Image, TouchableOpacity, TextInput, StatusBar} from 'react-native';
+import {StyleSheet, Text, View, Image, TouchableOpacity, TextInput} from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
 import SafeAreaView from 'react-native-safe-area-view';
 import AsyncStorage from '@react-native-community/async-storage';

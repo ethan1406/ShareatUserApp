@@ -109,20 +109,15 @@ export default class CheckSplitScreen extends Component<Props> {
              <Image style={{height: 30, width: 30, marginLeft: 20, tintColor: primaryColor}} source={require('./img/backbtn.png')} />
           </TouchableOpacity>
       ),
-      headerRight: (
-        <View />
-      ),
       title: 'Check',
       headerStyle: {
         backgroundColor: secondaryColor,
       },
       headerTintColor: darkGray,
       headerTitleStyle: {
-        marginTop:5,
-        fontSize: headerFontSize, 
-        textAlign:'center', 
-        flex:1 ,
-      } 
+        fontSize: headerFontSize
+      },
+      headerTitleAlign: 'center'
     };
   }
 

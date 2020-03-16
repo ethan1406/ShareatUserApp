@@ -62,20 +62,15 @@ export default class ConfirmationScreen extends Component<Props> {
              <Image style={{height: 30, width: 30, marginLeft: 20, tintColor: primaryColor}} source={require('./img/backbtn.png')} />
           </TouchableOpacity>
       ),
-      headerRight: (
-        <View />
-      ),
       title: 'Confirmation',
       headerStyle: {
         backgroundColor: secondaryColor,
       },
       headerTintColor: darkGray,
       headerTitleStyle: {
-        marginTop:5,
         fontSize: headerFontSize, 
-        textAlign:'center', 
-        flex:1 ,
-      } 
+      },
+      headerTitleAlign: 'center'
     };
   }
 

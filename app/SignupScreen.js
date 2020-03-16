@@ -3,7 +3,7 @@
 
 import React, {Component} from 'react';
 import {StyleSheet, Text, View, Image, TouchableOpacity,
-  TextInput, StatusBar} from 'react-native';
+  TextInput} from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
 import SafeAreaView from 'react-native-safe-area-view';
 
@@ -179,8 +179,6 @@ class SignupScreen extends Component<Props> {
     return (
       <KeyboardAwareScrollView contentContainerStyle={styles.container} bounces={false}
          behavior='padding' resizeMode='contain' innerRef={ref => {this.scroll = ref;}}>
-          <StatusBar backgroundColor='#ffa91f'
-            barStyle="light-content"/>
          <SafeAreaView style={styles.stack} resizeMode='contain' >
             <TouchableOpacity style={{alignSelf: 'flex-start', 'marginTop': 20}} onPress={() => this.props.navigation.navigate('First')}>
                <Image style={{height: 30, width: 30, marginLeft: 20}} source={require('./img/backbtn.png')} />

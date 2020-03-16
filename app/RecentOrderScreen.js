@@ -7,6 +7,9 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-community/async-storage';
 import {HeaderBackButton} from 'react-navigation';
 import {baseURL} from './Constants';
+import {primaryColor, secondaryColor, darkGray} from './Colors';
+import {headerFontSize} from './Dimensions';
+
 
 
 type Props = {};
@@ -33,19 +36,18 @@ export default class RecentOrderScreen extends Component<Props> {
         return{
             headerLeft:(
               <TouchableOpacity onPress={() => navigation.goBack(null)}>
-                 <Image style={{height: 30, width: 30, marginLeft: 20, tintColor: 'white'}} source={require('./img/backbtn.png')} />
+                 <Image style={{height: 30, width: 30, marginLeft: 20, tintColor: primaryColor}} source={require('./img/backbtn.png')} />
               </TouchableOpacity>
             ),
             title: 'Recent Orders',
             headerStyle: {
-                backgroundColor: '#ffa91f',
+                backgroundColor: secondaryColor,
             },
-            headerTintColor: 'white',
+            headerTintColor: darkGray,
             headerTitleStyle: {
-                fontSize: 18, 
-                textAlign:'center',
-                flex:1 ,
-            } 
+                fontSize: headerFontSize,
+            },
+            headerTitleAlign: 'center'
         };
     }
 
