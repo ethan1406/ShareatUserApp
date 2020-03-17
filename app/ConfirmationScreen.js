@@ -225,11 +225,11 @@ export default class ConfirmationScreen extends Component<Props> {
             onPress={()=> {this.props.navigation.navigate('PaymentMethods', {onSelect: this.onSelect.bind(this)});}} 
             color='#000000'>
               <Text style={styles.btnText}>Payment Method</Text>
-              <Text style={styles.rightText}> > </Text>
+              <Text style={[styles.rightText, {fontSize: 20, paddingTop: -3}]}> > </Text>
           </TouchableOpacity>
           <View style={[styles.signupBtn, {backgroundColor: 'white', flexDirection: 'row', alignItems: 'center', height: 45}]} 
             color='#000000'>
-              {this._getCardImage(this.state.selectedCard.type, '#F3A545')}
+              {this._getCardImage(this.state.selectedCard.type, primaryColor)}
               <Text>{`${this.state.selectedCard.type} Ending in ${this.state.selectedCard.last4Digits}`}</Text>
           </View>
           <View style={[styles.signupBtn]} color='#000000'>
@@ -277,7 +277,7 @@ export default class ConfirmationScreen extends Component<Props> {
           </View>
         </ScrollView>
         <TouchableOpacity style={[styles.confirmBtn]} onPress={()=> {this._confirmAndPay();}} color='#000000'>
-            <Text style={[styles.btnText, {marginLeft: 0, paddingTop: 12, color: 'white'}]}>Confirm & Pay</Text>
+            <Text style={[styles.btnText, {marginLeft: 0, paddingTop: 9, color: 'white'}]}>Confirm & Pay</Text>
         </TouchableOpacity>
         <Dialog.Container visible={this.state.dialogVisible}>
           <Dialog.Title>Custom Tip</Dialog.Title>
@@ -363,13 +363,14 @@ const styles = StyleSheet.create({
     marginLeft:20
   },
   btnText: {
-    color:darkGray,
+    color: darkGray,
     textAlign:'left',
     marginLeft: 15,
-    paddingTop: 9
+    fontSize: 17,
+    paddingTop: 3
   },
   rightText: {
-    color:'white',
+    color: primaryColor,
     textAlign:'right',
     marginRight: 15,
     paddingTop: 7

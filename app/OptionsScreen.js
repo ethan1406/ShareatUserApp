@@ -92,11 +92,11 @@ import {headerFontSize} from './Dimensions';
           backgroundColor= {secondaryColor}
           barStyle="dark-content"
         />
-        <TouchableOpacity style={{paddingTop: 20}} onPress={()=> {this.props.navigation.navigate('EditProfile');}}>
-          <Image style={styles.profile} source={require('./img/ic_user.png')} />
-        </TouchableOpacity>
         <Text style={styles.name}> {this.state.firstName} </Text>
         <Text style={styles.email}> {this.state.email} </Text>
+         <TouchableOpacity style={styles.signupBtn} onPress={()=> {this.props.navigation.navigate('EditProfile');}} color='#000000'>
+          <Text style={styles.btnText}> Edit Profile </Text>
+        </TouchableOpacity>
         <TouchableOpacity style={styles.optionContainer} onPress={()=> {this.props.navigation.navigate('RecentOrder');}} color='#000000'>
           <Image style={[styles.optionImage, {height: 30}]} source={require('./img/receipt.png')} />
           <Text style={styles.optionText}> Receipts </Text>
@@ -148,6 +148,17 @@ const styles = StyleSheet.create({
     borderColor: '#D3D3D3',
     borderWidth: 0.5,
   },
+  signupBtn: {
+    marginTop: 25,
+    marginBottom: 50,
+    width: '50%',
+    height: 25,
+    backgroundColor: primaryColor,
+    borderRadius: 2,
+    alignItems: 'center',
+    marginRight:20,
+    marginLeft:20
+  },
   optionImage: {
     tintColor: 'black', 
     marginLeft: 20, 
@@ -168,13 +179,17 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 16,
-    color: 'grey',
-    marginTop: 7,
+    color: darkGray,
+    marginTop: 40,
   },
   email: {
     fontSize: 13,
-    color: '#888888',
-    marginTop: 3,
-    marginBottom: 25,
+    color: darkGray,
+    marginTop: 3
   },
+  btnText: {
+    color:'white',
+    textAlign:'center',
+    paddingTop: 3
+  }
 });

@@ -88,7 +88,7 @@ import {headerFontSize} from './Dimensions';
           </View>;
         } else {
           userRewardsView = 
-            <ScrollView  contentContainerStyle={styles.bodyContainer}>
+            <ScrollView >
               <Text style={styles.wallet}> Wallet </Text>
               {this.state.restaurants.map((restaurant, index) => (
                   <TouchableOpacity style={styles.rewardContainer} key={index} 
@@ -138,14 +138,8 @@ import {headerFontSize} from './Dimensions';
     container: {
       flexDirection: 'column',
       justifyContent: 'flex-start',
-      flex: 1
-    },
-    bodyContainer: {
       backgroundColor: 'white',
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      right: 0,
+      flex: 1
     },
     noRewardsView: {
       alignSelf: 'center'

@@ -5,8 +5,7 @@ import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, StatusBar} from 'react-native';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import {baseURL} from './Constants';
-import { Auth } from 'aws-amplify';
-import { withNavigationFocus } from 'react-navigation';
+import {primaryColor, secondaryColor, darkGray} from './Colors';
 
 import axios from 'axios';
 
@@ -61,52 +60,33 @@ class QrCodeScreen extends Component<Props> {
   willFocus = this.props.navigation.addListener(
     'willFocus',
     payload => {
-      if (Platform.OS === 'ios') {
         this.scanner.reactivate();
-      }
     }
   );
 
   render() {
 
-    if (Platform.OS === 'android') {
-      const { isFocused } = this.props;
-      if (isFocused){
-        return (
-          <QRCodeScanner
-            ref={(node) => { this.scanner = node; }}
-            onRead={this.onSuccess.bind(this)}
-            showMarker={true}
-            markerStyle={{borderColor: '#ffa91f', borderRadius: 20}}
-            cameraProps={{captureAudio: false}}
-            cameraStyle={{alignSelf:'center',width: '100%', height:'100%'}}
-            containerStyle={{backgroundColor: '#F0F0F0'}}
-            bottomContent={<Text style={{position:'relative', color: 'white', paddingBottom: '95%', fontSize: 16}} > Scan Shareat QR Code </Text>}
-          />
-        );
-      } else {
-        return <View />;
-      }
-    }
 
     return (
+        <View style={styles.container}>
+        <StatusBar backgroundColor={secondaryColor} barStyle={'dark-content'} />
           <QRCodeScanner
             ref={(node) => { this.scanner = node; }}
             onRead={this.onSuccess.bind(this)}
             showMarker={true}
-            markerStyle={{borderColor: '#ffa91f', borderRadius: 20}}
+            markerStyle={{borderColor: primaryColor, borderRadius: 20}}
             cameraProps={{captureAudio: false}}
             cameraStyle={{alignSelf:'center',width: '100%', height:'100%'}}
             containerStyle={{backgroundColor: '#F0F0F0'}}
             bottomContent={<Text style={{position:'relative', color: 'white', paddingBottom: '95%', fontSize: 16}} > Scan Shareat QR Code </Text>}
           />
+        </View>
         );
-    
   }
 }
 
 
-export default Platform.OS === 'android' ? withNavigationFocus(QrCodeScreen) : QrCodeScreen;
+export default QrCodeScreen;
 
 const styles = StyleSheet.create({
   centerText: {
@@ -114,6 +94,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     padding: 32,
     color: '#777',
+  },
+  container: {
+    flex: 1,
+    width: '100%',
+    height: '100%'
   },
   textBold: {
     fontWeight: '500',

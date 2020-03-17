@@ -271,6 +271,6 @@ const styles = StyleSheet.create({
     color:'white',
     fontSize: 17,
     textAlign:'center',
-    paddingTop: 12
+    paddingTop: 9
   }
 });

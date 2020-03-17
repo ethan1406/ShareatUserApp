@@ -163,7 +163,6 @@ render() {
 }
 
 _passwordReqVerification = (oldPwd, pwd, confirmPwd) => {
-    console.log('here1');
     if(pwd !== confirmPwd) {
         console.log('here1.2');
         this.setState({errorMessage: 'Passwords do not match', messageColor: 'red'});
@@ -171,17 +170,13 @@ _passwordReqVerification = (oldPwd, pwd, confirmPwd) => {
     }
 
     if(pwd.length < 8 || oldPwd.length < 8) {
-        console.log('here1.3');
         this.setState({errorMessage: 'Password must be longer than 7 characters', messageColor: 'red'});
         return false;
     }
 
-    console.log('here1.5');
     if(!this._criteriaSatisfied(oldPwd) || !this._criteriaSatisfied(pwd)) {
-        console.log('failed');
         return false;
     }
-    console.log('here2');
     return true;
 }
 

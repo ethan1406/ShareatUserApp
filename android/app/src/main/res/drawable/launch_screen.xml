@@ -10,6 +10,10 @@
         <bitmap
             android:src="@drawable/shareat_illustrator_file"
             android:gravity="center" />
-    </item>
+    </item
+        android:top="200dp"
+        android:bottom="200dp"
+        android:right="200dp"
+        android:left="200dp">
 
 </layer-list>

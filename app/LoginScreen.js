@@ -1,7 +1,7 @@
 'use strict';
 
 import React, {Component} from 'react';
-import {StyleSheet, Text, View, Image, TouchableOpacity, TextInput} from 'react-native';
+import {StyleSheet, Text, View, Image, TouchableOpacity, TextInput, StatusBar} from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
 import SafeAreaView from 'react-native-safe-area-view';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -202,6 +202,7 @@ class LoginScreen extends Component<Props> {
     return (
       <KeyboardAwareScrollView style={{width: '100%'}}  innerRef={ref => {this.scroll = ref;}}
           contentContainerStyle={styles.container} bounces={false}>
+        <StatusBar barStyle={'dark-content'} translucent={false}/>
         <SafeAreaView style={styles.stack} resizeMode='contain'>
              <TouchableOpacity style={{alignSelf: 'flex-start', marginTop: 30}} onPress={() => this.props.navigation.navigate('First')}>
                <Image style={{height: 30, width: 30, marginLeft: 20}} source={require('./img/backbtn.png')} />
