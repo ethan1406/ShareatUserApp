@@ -33,7 +33,7 @@ export default class PaymentMethodsScreen extends Component<Props> {
       const lastName = await AsyncStorage.getItem('lastName');
 
       const {data} = await axios.get(`${baseURL}/user/${amazonUserSub}/getCards`);
-      this.setState({cards: data.cards});
+      this.setState({cards: data.cards, shouldRefresh: true});
     } catch (err) {
       this.setState({errorMessage: err.response.data.error});
     }
@@ -127,7 +127,7 @@ export default class PaymentMethodsScreen extends Component<Props> {
               <Text>{`${card.type} Ending in ${card.last4Digits}`}</Text>
             </TouchableOpacity>   
         ))}
-        <TouchableOpacity style={styles.cardContainer} onPress={() => this.props.navigation.navigate('AddPaymentMethod', { addCard: this._addCard })}>
+        <TouchableOpacity style={[styles.cardContainer, {marginTop: 20, borderColor: 'white'}]} onPress={() => this.props.navigation.navigate('AddPaymentMethod', { addCard: this._addCard })}>
           <Image style={{tintColor: turquoise, marginHorizontal: 15}} source={require('./img/stripe/icon_add.png')} />
           <Text> Add New Card... </Text>
       </TouchableOpacity>
