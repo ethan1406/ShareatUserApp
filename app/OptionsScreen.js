@@ -8,7 +8,7 @@ import {baseURL} from './Constants';
 import { Auth, Analytics } from 'aws-amplify';
 import axios from 'axios';
 import Dialog from 'react-native-dialog';
-import {primaryColor, secondaryColor, darkGray} from './Colors';
+import {primaryColor, secondaryColor, darkGray, gray} from './Colors';
 import {headerFontSize} from './Dimensions';
 
   type Props = {};
@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     height: 60,
-    borderColor: '#D3D3D3',
+    borderColor: gray,
     borderWidth: 0.5,
   },
   signupBtn: {

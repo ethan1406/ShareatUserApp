@@ -2,11 +2,11 @@
 'use strict';
 
 import React, {Component} from 'react';
-import {Text, View, TouchableOpacity, Image, ScrollView, StyleSheet} from 'react-native';
+import {Text, View, TouchableOpacity, Image, ScrollView, StyleSheet, StatusBar} from 'react-native';
 import {baseURL} from './Constants';
 import axios from 'axios';
 import AsyncStorage from '@react-native-community/async-storage';
-import {primaryColor, secondaryColor, darkGray} from './Colors';
+import {primaryColor, secondaryColor, darkGray, turquoise, gray} from './Colors';
 import {headerFontSize} from './Dimensions';
 type Props = {};
 
@@ -107,33 +107,31 @@ export default class PaymentMethodsScreen extends Component<Props> {
     }
   );
 
-
   render() {
     return (
-      <View>
+      <ScrollView 
+        contentContainerStyle={styles.container}>
+        <StatusBar backgroundColor= {secondaryColor} barStyle="dark-content"/>
         <Text style={styles.message}> Please select your payment method</Text>
-        <ScrollView styles={{flexDirection: 'column'}}
-          contentContainerStyle={{paddingVertical: 20}}>
-          {this.state.cards.map((card, index) => (
-            card.selected? 
-              <TouchableOpacity style={styles.cardContainer} key={index}>
-                {this._getCardImage(card.type, '#F3A545')}
-                <Text>{`${card.type} Ending in ${card.last4Digits}`}</Text>
-                <Image style={{tintColor: '#F3A545', marginLeft: 20}} source={require('./img/stripe/icon_checkmark.png')} />
-              </TouchableOpacity>
-            : 
-              <TouchableOpacity style={styles.cardContainer} key={index}
-                onPress={()=>{this._onPressItem(card._id);}}>
-                {this._getCardImage(card.type, '#8E8E8E')}
-                <Text>{`${card.type} Ending in ${card.last4Digits}`}</Text>
-              </TouchableOpacity>   
-          ))}
-        </ScrollView>
+        {this.state.cards.map((card, index) => (
+          card.selected? 
+            <TouchableOpacity style={styles.cardContainer} key={index}>
+              {this._getCardImage(card.type, primaryColor)}
+              <Text>{`${card.type} Ending in ${card.last4Digits}`}</Text>
+              <Image style={{tintColor: primaryColor, marginLeft: 20}} source={require('./img/stripe/icon_checkmark.png')} />
+            </TouchableOpacity>
+          : 
+            <TouchableOpacity style={styles.cardContainer} key={index}
+              onPress={()=>{this._onPressItem(card._id);}}>
+              {this._getCardImage(card.type, darkGray)}
+              <Text>{`${card.type} Ending in ${card.last4Digits}`}</Text>
+            </TouchableOpacity>   
+        ))}
         <TouchableOpacity style={styles.cardContainer} onPress={() => this.props.navigation.navigate('AddPaymentMethod', { addCard: this._addCard })}>
-            <Image style={{marginHorizontal: 15}} source={require('./img/stripe/icon_add.png')} />
-            <Text> Add New Card... </Text>
-        </TouchableOpacity>
-      </View>
+          <Image style={{tintColor: turquoise, marginHorizontal: 15}} source={require('./img/stripe/icon_add.png')} />
+          <Text> Add New Card... </Text>
+      </TouchableOpacity>
+      </ScrollView>
     );
   }
 }
@@ -141,9 +139,10 @@ export default class PaymentMethodsScreen extends Component<Props> {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'column',
-    justifyContent: 'space-around',
+    justifyContent: 'flex-start',
     backgroundColor: 'white',
-    alignItems: 'center'
+    alignItems: 'center',
+    height: '100%'
   },
   cardContainer: {
     flexDirection: 'row',
@@ -151,7 +150,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     height: 40,
-    borderColor: '#D3D3D3',
+    borderColor: gray,
     borderWidth: 0.5
   },
   message: {

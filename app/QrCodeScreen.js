@@ -78,7 +78,7 @@ class QrCodeScreen extends Component<Props> {
             cameraProps={{captureAudio: false}}
             cameraStyle={{alignSelf:'center',width: '100%', height:'100%'}}
             containerStyle={{backgroundColor: '#F0F0F0'}}
-            bottomContent={<Text style={{position:'relative', color: 'white', paddingBottom: '95%', fontSize: 16}} > Scan Shareat QR Code </Text>}
+            bottomContent={<Text style={{position:'relative', color: 'white', paddingBottom: '85%', fontSize: 16}} > Scan Shareat QR Code </Text>}
           />
         </View>
         );
