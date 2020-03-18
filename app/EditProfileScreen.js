@@ -216,24 +216,26 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         backgroundColor: 'white', 
         justifyContent: 'flex-start', 
-        alignItems: 'center'
+        alignItems: 'center',
+        height: '100%'
     },
     userIcon: {
         marginTop: 40,
         width: 100,
         height: 100,
+        resizeMode: 'contain'
     },
     textInput: {
         height: 40, 
         width: '100%',
-        borderBottomColor: 'gray',
+        borderBottomColor: darkGray,
         borderBottomWidth: 0.5,
         color: 'black',
         fontSize: 15,
         marginBottom: 25,
     },
     text: {
-        color: 'gray',
+        color: darkGray,
         fontSize: 12,
     },
     textInputContainer: {
@@ -248,7 +250,7 @@ const styles = StyleSheet.create({
         width: '80%',
         height: 45,
         borderRadius: 40,
-        backgroundColor: '#ffa91f',
+        backgroundColor: primaryColor,
         alignItems: 'center',
         shadowColor: 'rgba(0,0,0, .4)', // IOS
         shadowOffset: { height: 1, width: 1 }, // IOS
@@ -258,7 +260,7 @@ const styles = StyleSheet.create({
     },
     forgotBtnText: {
         marginBottom: 40,
-        color: '#ffa91f',
+        color: primaryColor,
         alignSelf: 'flex-start',
         width: '50%',
     },

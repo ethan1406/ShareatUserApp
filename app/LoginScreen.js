@@ -112,8 +112,6 @@ class LoginScreen extends Component<Props> {
 
   async _saveUserToDB(attributes) {
     try {
-       console.log(`sup ${attributes.sub}`);
-
        await axios.post(baseURL + '/user/signup/', 
               {email: attributes.email, amazonUserSub: attributes.sub}
              );

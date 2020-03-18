@@ -49,10 +49,9 @@ import {headerFontSize} from './Dimensions';
         Promise.all(promises).then((restaurants) =>{
           this.setState({restaurants});
         });
-
-        
       } catch (err) {
         console.log(err);
+        this.setState({isLoaded: true});
       }
     }
 
@@ -81,10 +80,11 @@ import {headerFontSize} from './Dimensions';
       var userRewardsView = null;
 
       if (this.state.isLoaded) {
-        if (loyaltyPoints.length === 0) {
+        if (loyaltyPoints.length == 0) {
         userRewardsView = 
           <View style={styles.noRewardsView}>
-              <Text> You have no rewards so far</Text>
+              <Text style={styles.noRewardsText}> You have no rewards currently.</Text>
+               <Text style={styles.noRewardsText}> Start collecting rewards at Shareat partnered restaurants.</Text>
           </View>;
         } else {
           userRewardsView = 
@@ -142,7 +142,14 @@ import {headerFontSize} from './Dimensions';
       flex: 1
     },
     noRewardsView: {
+      marginTop: 25,
       alignSelf: 'center'
+    },
+    noRewardsText: {
+      color: darkGray,
+      fontSize: 17,
+      textAlign: 'center',
+      marginTop: 10
     },
     rewardContainer: {
       marginLeft: 15,
