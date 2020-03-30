@@ -2,7 +2,7 @@
 'use strict';
 
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, TouchableOpacity, 
+import {StyleSheet, Text, View, TouchableOpacity, 
   Image, ScrollView, StatusBar} from 'react-native';
 import axios from 'axios';
 import {baseURL} from './Constants';
