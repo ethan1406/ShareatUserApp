@@ -40,7 +40,7 @@ const CheckModalNavigator = createStackNavigator(
   CheckNavigator: {
     screen: CheckNavigator,
     navigationOptions: {
-      header: null
+      headerShown: false
     }
   },
   OrderBuyer: OrderBuyerScreen
@@ -70,7 +70,7 @@ const OptionNavigator = createStackNavigator(
   ForgotPassword: {
     screen: ForgotPasswordScreen,
     navigationOptions: {
-      header: null,
+      headerShown: false,
     }
   }
 }
@@ -133,20 +133,20 @@ const AppNavigator = createSwitchNavigator(
       Login: {
         screen: LoginScreen,
         navigationOptions: {
-          header: null,
+          headerShown: false,
         },
       },
       ForgotPassword: {
         screen: ForgotPasswordScreen,
         navigationOptions: {
-          header: null,
+          headerShown: false,
         }
       }
     }),
     Signup: {
       screen: SignupScreen,
       navigationOptions: {
-        header: null,
+        headerShown: false,
       },
     }
   }),

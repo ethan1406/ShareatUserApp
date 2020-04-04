@@ -15,13 +15,12 @@ class QrCodeScreen extends Component<Props> {
   constructor(props) {
     super(props);
     this.state = { 
-
      };
   }
 
   static navigationOptions = ({navigation}) => {
     return{
-      headerTransparent: true,
+      headerShown: false,
     };
   }
 
@@ -65,22 +64,17 @@ class QrCodeScreen extends Component<Props> {
   );
 
   render() {
-
-
     return (
-        <View style={styles.container}>
-        <StatusBar backgroundColor={secondaryColor} barStyle={'dark-content'} />
           <QRCodeScanner
             ref={(node) => { this.scanner = node; }}
             onRead={this.onSuccess.bind(this)}
             showMarker={true}
             markerStyle={{borderColor: primaryColor, borderRadius: 20}}
             cameraProps={{captureAudio: false}}
-            cameraStyle={{alignSelf:'center',width: '100%', height:'100%'}}
-            containerStyle={{backgroundColor: '#F0F0F0'}}
-            bottomContent={<Text style={{position:'relative', color: 'white', paddingBottom: '85%', fontSize: 16}} > Scan Shareat QR Code </Text>}
+            cameraStyle={{}}
+            containerStyle={{backgroundColor: '#F0F0F0',}}
+            bottomContent={<Text style={{position:'relative', color: 'white', paddingBottom: '60%', fontSize: 16}} > Scan Shareat QR Code </Text>}
           />
-        </View>
         );
   }
 }
@@ -89,30 +83,4 @@ class QrCodeScreen extends Component<Props> {
 export default QrCodeScreen;
 
 const styles = StyleSheet.create({
-  centerText: {
-    flex: 1,
-    fontSize: 18,
-    padding: 32,
-    color: '#777',
-  },
-  container: {
-    flex: 1,
-    width: '100%',
-    height: '100%'
-  },
-  textBold: {
-    fontWeight: '500',
-    color: '#000',
-  },
-  buttonText: {
-    fontSize: 21,
-    color: 'rgb(0,122,255)',
-  },
-  buttonTouchable: {
-    padding: 16,
-  },
-  logo: {
-    width: 170,
-    height: 40,
-  }
 });
