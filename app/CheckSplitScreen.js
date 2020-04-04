@@ -254,12 +254,12 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 15,
     marginLeft: 20,
-    color: 'gray'
+    color: darkGray
   },
   confirmBtn: {
     width: '100%',
     height: 40,
-    backgroundColor: '#ffa91f',
+    backgroundColor: primaryColor,
     borderRadius: 0,
     alignItems: 'center',
     marginRight:20,

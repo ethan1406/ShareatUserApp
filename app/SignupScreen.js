@@ -12,6 +12,8 @@ import { withOAuth } from 'aws-amplify-react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
 
+import {darkGray} from './Colors';
+
 import {baseURL} from './Constants';
 
 type Props = {};
@@ -303,6 +305,7 @@ const styles = StyleSheet.create({
   },
   textInput: {
     height: 45, 
+    color: darkGray,
     width: '80%',
     borderBottomColor: 'gray',
     borderBottomWidth: 0.5,

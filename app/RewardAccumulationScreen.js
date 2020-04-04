@@ -6,9 +6,11 @@ import {Platform, StyleSheet, Text, View, TouchableOpacity,
   ScrollView, Animated, Easing} from 'react-native';
 import * as Progress from 'react-native-progress';
 //import Confetti from 'react-native-confetti';
+import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
 
 import {baseURL} from './Constants';
+import {primaryColor, secondaryColor, darkGray} from './Colors';
 
 
 type Props = {};
@@ -34,16 +36,20 @@ export default class RewardAccumulationScreen extends Component<Props> {
     if(this._confettiView) {
      this._confettiView.startConfetti();
     }
+    
+    const {restaurantId} = this.props.navigation.state.params;
 
     try {
-      const response = await axios.get(baseURL + 
-        `/user/getMerchantInfo?restaurantId=${this.props.navigation.state.params.restaurantId}`);
+      const amazonUserSub = await AsyncStorage.getItem('amazonUserSub');
 
-      const loyaltyResponse = await axios.get(baseURL + '/user/loyaltyPoints');
+      const response = await axios.get(baseURL + 
+        `/user/getMerchantInfo?restaurantId=${restaurantId}`);
+
+      const loyaltyResponse = await axios.get(baseURL + `/user/${amazonUserSub}/loyaltyPoints`);
       const loyaltyPoints = loyaltyResponse.data;
       var originalPoints = 0;
       loyaltyPoints.forEach(loyalty => {
-        if(loyalty.restaurantId == this.props.navigation.state.params.restaurantId) {
+        if(loyalty.restaurantId == restaurantId) {
           originalPoints = loyalty.points;
         }
       });
@@ -71,7 +77,7 @@ export default class RewardAccumulationScreen extends Component<Props> {
     return {
       headerRight: ( 
         <TouchableOpacity onPress={() => navigation.navigate('Check')}>
-          <Text style={{color: '#F3A545', marginRight: 20}}> DONE </Text>
+          <Text style={{color: primaryColor, marginRight: 20}}> DONE </Text>
         </TouchableOpacity>
       ),
       headerLeft: null,
@@ -90,12 +96,12 @@ export default class RewardAccumulationScreen extends Component<Props> {
               {this.state.merchant.rewards.map((reward, index) => (
                 <TouchableOpacity style={styles.rewardContainer} key={index}>
                   <Text>{reward.reward} </Text>
-                  <Animated.Text style={{color:'gray', marginTop: 3, marginBottom: 10}}> 
+                  <Animated.Text style={{color: darkGray, marginTop: 3, marginBottom: 10}}> 
                     {this.state.originalPointsAnimated._value} / {reward.pointsRequired} pts
                   </Animated.Text>
                   <Progress.Circle showsText={true} animated={true}
-                    progress={this.state.originalPointsAnimated._value/reward.pointsRequired} size={90} color='#F3A545'/>
-                  <Animated.Text style={{color:'gray', marginTop: 10}}> 
+                    progress={this.state.originalPointsAnimated._value/reward.pointsRequired} size={90} color={primaryColor}/>
+                  <Animated.Text style={{color:darkGray, marginTop: 10}}> 
                     {reward.pointsRequired - this.state.originalPointsAnimated._value} pts left
                   </Animated.Text>
                 </TouchableOpacity>

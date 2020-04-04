@@ -4,8 +4,7 @@
 import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View, StatusBar} from 'react-native';
 import QRCodeScanner from 'react-native-qrcode-scanner';
-import {baseURL} from './Constants';
-import {primaryColor, secondaryColor, darkGray} from './Colors';
+import {primaryColor, secondaryColor} from './Colors';
 
 import axios from 'axios';
 
@@ -68,12 +67,14 @@ class QrCodeScreen extends Component<Props> {
           <QRCodeScanner
             ref={(node) => { this.scanner = node; }}
             onRead={this.onSuccess.bind(this)}
+            topViewStyle={{height: 0, flex: 0}}
+            bottomViewStyle={{height: 0, flex: 0}}
             showMarker={true}
             markerStyle={{borderColor: primaryColor, borderRadius: 20}}
             cameraProps={{captureAudio: false}}
-            cameraStyle={{}}
-            containerStyle={{backgroundColor: '#F0F0F0',}}
-            bottomContent={<Text style={{position:'relative', color: 'white', paddingBottom: '60%', fontSize: 16}} > Scan Shareat QR Code </Text>}
+            cameraStyle={{alignSelf:'center', height: '200%'}}
+            containerStyle={{backgroundColor: ''}}
+            bottomContent={<Text style={{color: 'white', paddingBottom: '85%', fontSize: 16}} > Scan Shareat QR Code </Text>}
           />
         );
   }

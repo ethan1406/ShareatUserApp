@@ -337,11 +337,11 @@ const styles = StyleSheet.create({
   restaurantText: {
     alignSelf: 'flex-start',
     fontWeight: 'bold',
-    fontSize: 14,
+    fontSize: 24,
     marginTop: 20,
     marginLeft: 20,
     marginBottom: 15,
-    color: 'black'
+    color: darkGray
   },
   signupBtn: {
     marginBottom: 0,
