@@ -68,13 +68,13 @@ class QrCodeScreen extends Component<Props> {
             ref={(node) => { this.scanner = node; }}
             onRead={this.onSuccess.bind(this)}
             topViewStyle={{height: 0, flex: 0}}
-            bottomViewStyle={{height: 0, flex: 0}}
+            bottomViewStyle={{height: 0, flex: 0, marginBottom: '-90%'}}
             showMarker={true}
-            markerStyle={{borderColor: primaryColor, borderRadius: 20}}
+            markerStyle={{borderColor: primaryColor, borderRadius: 20, marginBottom: '20%'}}
             cameraProps={{captureAudio: false}}
             cameraStyle={{alignSelf:'center', height: '200%'}}
-            containerStyle={{backgroundColor: ''}}
-            bottomContent={<Text style={{color: 'white', paddingBottom: '85%', fontSize: 16}} > Scan Shareat QR Code </Text>}
+            containerStyle={{alignItems:'space-between'}}
+            bottomContent={<Text style={{color: 'white', fontSize: 16}}> Scan Shareat QR Code </Text>}
           />
         );
   }
@@ -82,6 +82,3 @@ class QrCodeScreen extends Component<Props> {
 
 
 export default QrCodeScreen;
-
-const styles = StyleSheet.create({
-});
