@@ -19,7 +19,7 @@ import {headerFontSize} from './Dimensions';
 type Props = {};
 const screenHeight = Dimensions.get('window').height;
 const screenWidth= Dimensions.get('window').width;
-const taxRate = 0.095;
+const defaultTipRate = 0.12;
 
 export default class ConfirmationScreen extends Component<Props> {
 
@@ -30,8 +30,8 @@ export default class ConfirmationScreen extends Component<Props> {
     var myOrders = params.data.filter(order => order.buyers.map(buyer => buyer.amazonUserSub).includes(params.amazonUserSub));
 
     var individualPrice = myOrders.reduce((total, order) => ( total + order.price/order.buyers.length), 0);
-    var tax = individualPrice * taxRate;
-    var tip = (tax + individualPrice) * 0.12;
+    var tax = (individualPrice/params.subTotal) * params.tax;
+    var tip = individualPrice * defaultTipRate;
     var individualTotal = parseInt(individualPrice + tax + tip, 10);
 
     this.state = {
@@ -158,7 +158,7 @@ export default class ConfirmationScreen extends Component<Props> {
         dialogVisible: true});
       return;
     }
-    var tip = (this.state.individualPrice + this.state.tax) * tipRate;
+    var tip = (this.state.individualPrice) * tipRate;
     var individualTotal = parseInt(tip + this.state.individualPrice + this.state.tax, 10);
     
     this.setState({
@@ -219,7 +219,7 @@ export default class ConfirmationScreen extends Component<Props> {
   render() {
     return (
       <View style={styles.container} resizeMode='contain'>
-      <ScrollView style={{height:screenHeight, width:screenWidth}} showsVerticalScrollIndicator={false}>
+      <View style={{flex: 1, justifyContent: 'flex-start', flexDirection: 'column', height:screenHeight, width:screenWidth}}>
         <Text style={styles.restaurantText}>{this.state.restaurantName}</Text>
           <TouchableOpacity style={styles.totalContainer} 
             onPress={()=> {this.props.navigation.navigate('PaymentMethods', {onSelect: this.onSelect.bind(this)});}} 
@@ -275,7 +275,7 @@ export default class ConfirmationScreen extends Component<Props> {
                 />
               </View>
           </View>
-        </ScrollView>
+        </View>
         <TouchableOpacity style={[styles.confirmBtn]} onPress={()=> {this._confirmAndPay();}} color='#000000'>
             <Text style={[styles.btnText, {marginLeft: 0, paddingTop: 9, color: 'white'}]}>Confirm & Pay</Text>
         </TouchableOpacity>
@@ -284,8 +284,8 @@ export default class ConfirmationScreen extends Component<Props> {
           <Dialog.Description>
             Please enter the amount of tip you want to give.
           </Dialog.Description>
-          <Dialog.Input multiline={false} keyboardType='numeric' value={this.state.customTipString}
-           placeholder='Custom Tip' onChangeText={(customTipString) => this._handleCustomTip(customTipString)} />
+          <Dialog.Input multiline={false} style={{color: darkGray}} keyboardType='numeric' value={this.state.customTipString}
+           placeholder='Custom Tip' placeholderTextColor={darkGray} onChangeText={(customTipString) => this._handleCustomTip(customTipString)} />
           <Dialog.Button label="Cancel" onPress={()=> { this.setState({ dialogVisible: false });}} />
           <Dialog.Button label="Enter" onPress={()=> {this._enterCustomTip();}} />
         </Dialog.Container>
@@ -297,13 +297,12 @@ export default class ConfirmationScreen extends Component<Props> {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'flex-end',
+    justifyContent: 'flex-start',
     flexDirection: 'column',
     alignItems: 'center',
     backgroundColor: 'white'
   },
   tipContainer: {
-    flex: 1,
     marginTop: 0,
     width: '100%',
     flexDirection: 'column',

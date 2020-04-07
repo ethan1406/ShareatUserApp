@@ -13,7 +13,8 @@ import {headerFontSize} from './Dimensions';
 
 type Props = {};
 const colors = [turquoise, blue, pink, green, red, purple, lightPink];
-const screenWidth= Dimensions.get('window').width; 
+const screenHeight = Dimensions.get('window').height;
+const screenWidth= Dimensions.get('window').width;
 
 var colorIndex = 0;
 export default class CheckSplitScreen extends Component<Props> {
@@ -39,6 +40,8 @@ export default class CheckSplitScreen extends Component<Props> {
       restaurantName: params.restaurantName,
       restaurantId: params.restaurantId,
       orderTotal: params.orderTotal,
+      subTotal: params.subTotal,
+      tax: params.tax,
       error: null,
       refreshing: false,
       selectedIndex: 0,
@@ -167,12 +170,12 @@ export default class CheckSplitScreen extends Component<Props> {
 
   render() {
     return (
-      <View style={[styles.container]} resizeMode='contain'>
+      <View style={styles.container} resizeMode='contain'>
         <StatusBar
           backgroundColor= {secondaryColor}
           barStyle="dark-content"
         />
-        <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={{flex: 1, justifyContent: 'flex-start', flexDirection: 'column', height:screenHeight, width:screenWidth}}>
           <Text style={styles.restaurantText}>{this.state.restaurantName}</Text>
           <SegmentedControlTab
             values={['Group Orders', 'My Orders']}
@@ -197,14 +200,17 @@ export default class CheckSplitScreen extends Component<Props> {
           </View>
           <View style={styles.orderTotalContainer}>
             <Text style={{color: 'gray'}}>{this.state.selectedIndex ? 'Your Total: ' : 'Group Total: '} </Text>
-            <Text> {this.state.selectedIndex ? `$${this._getindividualTotal()}`: `$${(this.state.orderTotal/100).toFixed(2)}`} </Text>
+            <Text> {this.state.selectedIndex ? `$${this._getindividualTotal()}`: `$${(this.state.subTotal/100).toFixed(2)}`} </Text>
           </View>
-        </ScrollView>
+        </View>
         <Text style={{color: 'gray'}}>Double Tap the Dishes You've Shared!</Text>
         <TouchableOpacity style={styles.confirmBtn} onPress={()=> this.props.navigation.navigate('Confirmation', {
               data: this.state.data, 
               restaurantName: this.state.restaurantName,
               restaurantId: this.state.restaurantId,
+              tax: this.state.tax,
+              subTotal: this.state.subTotal,
+              orderTotal: this.state.orderTotal,
               amazonUserSub: this.state.amazonUserSub,
               partyId: this.state.partyId,
               colorMap: this.state.colorMap
@@ -218,7 +224,7 @@ export default class CheckSplitScreen extends Component<Props> {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'flex-end',
+    justifyContent: 'flex-start',
     flexDirection: 'column',
     alignItems: 'center',
     backgroundColor: 'white',

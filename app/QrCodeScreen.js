@@ -44,8 +44,11 @@ class QrCodeScreen extends Component<Props> {
     axios.get(e.data).then((response) => {
       this.props.navigation.navigate('Check', {
         data: response.data.orders, 
-        restaurantName: response.data.restaurantName,
+        restaurantName: response.data.restaurant_name,
         orderTotal: response.data.orderTotal,
+        subTotal: response.data.sub_total,
+        guestCount: response.data.guest_count,
+        tax: response.data.tax,
         members: response.data.members,
         partyId: response.data._id,
         restaurantId: response.data.restaurantId
