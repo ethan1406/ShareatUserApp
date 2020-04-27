@@ -305,7 +305,7 @@ const styles = StyleSheet.create({
   },
   textInput: {
     height: 45, 
-    color: darkGray,
+    color: 'black',
     width: '80%',
     borderBottomColor: 'gray',
     borderBottomWidth: 0.5,

@@ -2,9 +2,10 @@
 'use strict';
 
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, StatusBar} from 'react-native';
+import {Text, StatusBar} from 'react-native';
 import QRCodeScanner from 'react-native-qrcode-scanner';
-import {primaryColor, secondaryColor} from './Colors';
+import {primaryColor} from './Colors';
+import AsyncStorage from '@react-native-community/async-storage';
 
 import axios from 'axios';
 
@@ -39,29 +40,54 @@ class QrCodeScreen extends Component<Props> {
   
   }
 
-  onSuccess(e) {
-    //e.data
-    axios.get(e.data).then((response) => {
-      this.props.navigation.navigate('Check', {
-        data: response.data.orders, 
-        restaurantName: response.data.restaurant_name,
-        orderTotal: response.data.orderTotal,
-        subTotal: response.data.sub_total,
-        guestCount: response.data.guest_count,
-        tax: response.data.tax,
-        members: response.data.members,
-        partyId: response.data._id,
-        restaurantId: response.data.restaurantId
-      });
-    }).catch((err) => {
-      console.log(err);
-    });
+  waitAndreactivate() {
+     setTimeout(() => {
+        this.scanner.reactivate();
+     }, 1000);
+  }
+
+  async onSuccess(e) {
+    const results = e.data.match('https://www.shareatpay.com/party/');
+    if (results == null) {
+      this.waitAndreactivate();
+    } else {
+      try {
+        const amazonUserSub = await AsyncStorage.getItem('amazonUserSub');
+        const firstName = await AsyncStorage.getItem('firstName');
+        const lastName = await AsyncStorage.getItem('lastName');
+
+        const userInfo = {amazonUserSub, firstName, lastName};
+
+
+        const response =  await axios.post(e.data, {amazonUserSub});
+
+        this.props.navigation.navigate('Check', {
+          data: response.data.orders, 
+          restaurantName: response.data.restaurant_name,
+          guestCount: response.data.guest_count,
+          totals: response.data.totals,
+          ticketId: response.data.omnivore_ticket_id,
+          members: response.data.members,
+          partyId: response.data._id,
+          restaurantOmnivoreId: response.data.restaurant_omnivore_id,
+          restaurantAmazonSub: response.data.restaurantAmazonSub,
+          userInfo: userInfo
+        });
+
+      } catch (err) {
+        console.log(err);
+        this.waitAndreactivate();
+      }
+    }
+
   }
 
   willFocus = this.props.navigation.addListener(
     'willFocus',
     payload => {
-        this.scanner.reactivate();
+        if (this.scanner !== null) {
+          this.scanner.reactivate();
+        }
     }
   );
 

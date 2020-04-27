@@ -2,15 +2,14 @@
 'use strict';
 
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, TouchableOpacity,
+import {StyleSheet, Text, View, TouchableOpacity,
   ScrollView, Animated, Easing} from 'react-native';
 import * as Progress from 'react-native-progress';
 //import Confetti from 'react-native-confetti';
-import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
 
 import {baseURL} from './Constants';
-import {primaryColor, secondaryColor, darkGray} from './Colors';
+import {primaryColor, darkGray} from './Colors';
 
 
 type Props = {};
@@ -24,9 +23,10 @@ export default class RewardAccumulationScreen extends Component<Props> {
     this.state = {
       merchant: {rewards:[]},
       restaurantName: params.restaurantName,
-      pointAccumulated: Math.floor(params.individualPrice/100),
+      pointAccumulated: Math.floor(params.sub_total/100),
       originalPointsAnimated: new Animated.Value(0),
-      errorMessage: ''
+      errorMessage: '',
+      userInfo: params.userInfo
     };
 
     this.state.originalPointsAnimated.addListener(({value}) => this._value = value);
@@ -37,19 +37,17 @@ export default class RewardAccumulationScreen extends Component<Props> {
      this._confettiView.startConfetti();
     }
     
-    const {restaurantId} = this.props.navigation.state.params;
+    const {restaurantAmazonSub} = this.props.navigation.state.params;
 
     try {
-      const amazonUserSub = await AsyncStorage.getItem('amazonUserSub');
-
       const response = await axios.get(baseURL + 
-        `/user/getMerchantInfo?restaurantId=${restaurantId}`);
+        `/user/getMerchantInfo?restaurantId=${restaurantAmazonSub}`);
 
-      const loyaltyResponse = await axios.get(baseURL + `/user/${amazonUserSub}/loyaltyPoints`);
+      const loyaltyResponse = await axios.get(baseURL + `/user/${this.state.userInfo.amazonUserSub}/loyaltyPoints`);
       const loyaltyPoints = loyaltyResponse.data;
       var originalPoints = 0;
       loyaltyPoints.forEach(loyalty => {
-        if(loyalty.restaurantId == restaurantId) {
+        if(loyalty.restaurantId == restaurantAmazonSub) {
           originalPoints = loyalty.points;
         }
       });

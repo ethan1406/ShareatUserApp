@@ -3,7 +3,6 @@
 import React, {Component} from 'react';
 import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import AsyncStorage from '@react-native-community/async-storage';
 import {baseURL} from '../Constants';
 import {secondaryColor, darkGray} from '../Colors';
 import axios from 'axios';
@@ -25,11 +24,11 @@ export default class OrderListItem extends Component<Props> {
 
   _splitOrder = async () => {
       try {
-        const amazonUserSub = await AsyncStorage.getItem('amazonUserSub');
-        const firstName = await AsyncStorage.getItem('firstName');
-        const lastName = await AsyncStorage.getItem('lastName');
+        const amazonUserSub = this.props.userInfo.amazonUserSub;
+        const firstName = this.props.userInfo.firstName;
+        const lastName = this.props.userInfo.lastName;
 
-        axios.post(`${baseURL}/order/split`, 
+        axios.post(`${baseURL}/party/order/split/check`, 
           {partyId: this.props.partyId, orderId: this.props.id,
            amazonUserSub, firstName, lastName});
       } catch (err) {

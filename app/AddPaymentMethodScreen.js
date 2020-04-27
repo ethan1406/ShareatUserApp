@@ -3,7 +3,7 @@
 
 import React, {Component} from 'react';
 import {Text, View, TouchableOpacity, Image, StyleSheet} from 'react-native';
-import {spreedlyAddCardURL, environment_key, baseURL} from './Constants.js';
+import {baseURL} from './Constants.js';
 import axios from 'axios';
 import SafeAreaView from 'react-native-safe-area-view';
 import { CreditCardInput } from 'react-native-credit-card-input';
@@ -26,29 +26,28 @@ export default class AddPaymentMethodScreen extends Component<Props> {
 
   _addCard = async () => {
     if(this.state.form.valid) {
-      const names = this.state.form.values.name.split(' ');
       const number = this.state.form.values.number;
-      const date = this.state.form.values.expiry.split('/');
+      var date = this.state.form.values.expiry.split('/');
+
+      if (date[0][0] === '0') {
+        date[0] = date[0].substr(1);
+      }
 
       var cardInfo = 
-      {payment_method: {
-          credit_card: {
-            first_name: names[0],
-            last_name: names[1],
-            number: number.replace(/\s/g, ''),
-            verification_value: this.state.form.values.cvc,
-            month: date[0],
-            year: `20${date[1]}`,
-          },
-          data: {
-            my_payment_method_identifier: number.slice(number.length - 4),
-            type: this.state.form.values.type
-          }
-      }};
+      {
+        card: {
+          number: number.replace(/\s/g, ''),
+          cvc2: this.state.form.values.cvc,
+          exp_month: parseInt(date[0]),
+          exp_year: parseInt(`20${date[1]}`)
+        },
+        cardType: this.state.form.values.type
+      };
+
+
       try {
         const amazonUserSub = await AsyncStorage.getItem('amazonUserSub');
-        const {data} = await axios.post(`${spreedlyAddCardURL}?environment_key=${environment_key}`, cardInfo);
-        const response = await axios.post(`${baseURL}/user/${amazonUserSub}/storeCardToken`, data.transaction);
+        const response = await axios.post(`${baseURL}/user/${amazonUserSub}/storeOmnivoreCard`, cardInfo);
         if(response.status == 500) {
           this.setState({errorMessage : 'Please try again'});
         } else if (response.status == 200) {

@@ -5,10 +5,10 @@ import {Platform, StyleSheet, Text, View, TouchableOpacity, FlatList, Dimensions
    Image, ScrollView, StatusBar} from 'react-native';
 import SegmentedControlTab from 'react-native-segmented-control-tab';
 import Pusher from 'pusher-js/react-native';
-import AsyncStorage from '@react-native-community/async-storage';
 import OrderListItem from './components/OrderListItem';
 import {primaryColor, secondaryColor, darkGray, pink, red, lightPink, purple, blue, turquoise, green} from './Colors';
 import {headerFontSize} from './Dimensions';
+import { pusherId } from './Constants';
 
 
 type Props = {};
@@ -16,7 +16,6 @@ const colors = [turquoise, blue, pink, green, red, purple, lightPink];
 const screenHeight = Dimensions.get('window').height;
 const screenWidth= Dimensions.get('window').width;
 
-var colorIndex = 0;
 export default class CheckSplitScreen extends Component<Props> {
 
   constructor(props) {
@@ -27,31 +26,30 @@ export default class CheckSplitScreen extends Component<Props> {
 
     var params = this.props.navigation.state.params;
 
-    var colorMap = {};
-    params.members.forEach((member) => {
-        colorMap[member.amazonUserSub] = colors[colorIndex % 7];
-        colorIndex ++; 
-    });
+    const colorMap = this._createColorMap(params.members);
+    const isGroupCheck = params.members.length == 1 ? false : true;
+    const hasPaid = (params.members.find(member => member.amazonUserSub === params.userInfo.amazonUserSub)).hasPaid;
 
-    //5bf14f828a45424e801f938b
     this.state = {
       loading: false,
       data: params.data,
+      isGroupCheck: isGroupCheck,
+      hasPaid: hasPaid,
       restaurantName: params.restaurantName,
-      restaurantId: params.restaurantId,
-      orderTotal: params.orderTotal,
-      subTotal: params.subTotal,
-      tax: params.tax,
+      restaurantOmnivoreId: params.restaurantOmnivoreId,
+      restaurantAmazonSub: params.restaurantAmazonSub,
+      ticketId: params.ticketId,
+      totals: params.totals,
       error: null,
       refreshing: false,
       selectedIndex: 0,
       partyId: params.partyId,
       colorMap: colorMap,
-      amazonUserSub: ''
+      userInfo: params.userInfo
     };
 
     //set up pusher to asynchronously update who are splitting the dishes
-    this.pusher = new Pusher('96771d53b6966f07b9f3', {
+    this.pusher = new Pusher(pusherId, {
         //authEndpoint: 'YOUR PUSHER AUTH SERVER ENDPOINT',
         cluster: 'us2',
         encrypted: true
@@ -60,58 +58,22 @@ export default class CheckSplitScreen extends Component<Props> {
     this.splittingChannel = this.pusher.subscribe(params.partyId); // subscribe to the party channel
 
     this.splittingChannel.bind('splitting', (data) => {
-      if(data.add) {
-        const updatedOrders = this.state.data.slice();
-        const index = updatedOrders.findIndex(order=> order._id == data.orderId);
-        updatedOrders[index].buyers.push({firstName: data.firstName, 
-            lastName: data.lastName, amazonUserSub: data.amazonUserSub});
-        var updatedColorMap = JSON.parse(JSON.stringify(this.state.colorMap));
+      this.setState({data: data.orders, refresh: !this.state.refresh});
+    });
 
-        if(!data.isMember) {
-          updatedColorMap[data.amazonUserSub] = colors[colorIndex % 7];
-          colorIndex++;
-        }
-        //var joined = this.state.members.concat(data.userId);
-        
-        this.setState({data: updatedOrders,
-          colorMap: updatedColorMap, refresh: !this.state.refresh});
-      } else {
-        const updatedOrders = this.state.data.slice();
-        const index = updatedOrders.findIndex(order=> order._id == data.orderId);
-        updatedOrders[index].buyers = updatedOrders[index].buyers.filter(buyer => buyer.amazonUserSub != data.amazonUserSub);
-
-        // const indexToRemove = this.state.members.indexOf(data.userId);
-        // const updatedMembers = this.state.members.slice(indexToRemove, 1);
-
-        this.setState({data: updatedOrders, refresh: !this.state.refresh});
-      }
+    this.splittingChannel.bind('new_member', (data) => {
+      const colorMap = this._createColorMap(data.members);
+      this.setState({isGroupCheck: true, colorMap: colorMap, refresh: !this.state.refresh});
     });
   }
 
-  async componentDidMount() {    
-    try {
-      const amazonUserSub = await AsyncStorage.getItem('amazonUserSub');
-      this.setState({amazonUserSub});
-    } catch (err) {
-      console.log(err);
-    }
-    
-  }
-
-  willFocus = this.props.navigation.addListener(
-    'willBlur',
-    payload => {
-      colorIndex = 0;
-    }
-  );
-
   static navigationOptions = ({navigation}) => {
     return{
-      headerLeft:( 
+      headerLeft: () =>
           <TouchableOpacity onPress={() => navigation.goBack(null)}>
              <Image style={{height: 30, width: 30, marginLeft: 20, tintColor: primaryColor}} source={require('./img/backbtn.png')} />
           </TouchableOpacity>
-      ),
+      ,
       title: 'Check',
       headerStyle: {
         backgroundColor: secondaryColor,
@@ -122,6 +84,18 @@ export default class CheckSplitScreen extends Component<Props> {
       },
       headerTitleAlign: 'center'
     };
+  }
+
+  _createColorMap = (members) => {
+    var colorMap = {};
+    var colorIndex = 0;
+
+    members.forEach((member) => {
+        colorMap[member.amazonUserSub] = colors[colorIndex % colors.length];
+        colorIndex ++; 
+    });
+    
+    return colorMap;
   }
 
   _keyExtractor = (item) => item._id;
@@ -141,7 +115,8 @@ export default class CheckSplitScreen extends Component<Props> {
       buyers={item.buyers}
       partyId={this.state.partyId}
       colorMap={this.state.colorMap}
-      confirmation={false}
+      confirmation={!this.state.isGroupCheck}
+      userInfo={this.state.userInfo}
       navigation={this.props.navigation}
     />
   )
@@ -149,7 +124,7 @@ export default class CheckSplitScreen extends Component<Props> {
   _renderHeader = () => {
     var priceTag = 'Price';
     if(this.state.selectedIndex == 1) {
-      if(this.state.data.filter(order => order.buyers.map(buyer => buyer.amazonUserSub).includes(this.state.amazonUserSub)).length == 0) {
+      if(this.state.data.filter(order => order.buyers.map(buyer => buyer.amazonUserSub).includes(this.state.userInfo.amazonUserSub)).length == 0) {
         return null;
       } else {
         priceTag = 'Price for You';
@@ -163,12 +138,28 @@ export default class CheckSplitScreen extends Component<Props> {
 
 
   _getindividualTotal = () => {
-    const individualOrders = this.state.data.filter(order => order.buyers.map(buyer => buyer.amazonUserSub).includes(this.state.amazonUserSub));
+    const individualOrders = this.state.data.filter(order => order.buyers.map(buyer => buyer.amazonUserSub).includes(this.state.userInfo.amazonUserSub));
     const individualPrice = individualOrders.reduce((total, order) => ( total + order.price/order.buyers.length), 0);
     return (individualPrice/100).toFixed(2);
   }
 
   render() {
+
+    const { isGroupCheck, hasPaid, selectedIndex} = this.state;
+    let instructionMessage = <View />;
+    let totalTitle = selectedIndex ? 'Your Total: ' : 'Group Total: ';
+
+    if (!isGroupCheck) {
+      totalTitle = 'Your Total: ';
+    }
+
+    if (hasPaid) {
+      instructionMessage = <Text style={{color: 'gray'}}>You have already completed your payment.</Text>;
+    } else if (isGroupCheck) {
+      instructionMessage = <Text style={{color: 'gray'}}>Double Tap the Dishes You've Shared!</Text>;
+    } 
+
+
     return (
       <View style={styles.container} resizeMode='contain'>
         <StatusBar
@@ -177,7 +168,7 @@ export default class CheckSplitScreen extends Component<Props> {
         />
         <View style={{flex: 1, justifyContent: 'flex-start', flexDirection: 'column', height:screenHeight, width:screenWidth}}>
           <Text style={styles.restaurantText}>{this.state.restaurantName}</Text>
-          <SegmentedControlTab
+          { isGroupCheck ? <SegmentedControlTab
             values={['Group Orders', 'My Orders']}
             tabStyle={styles.tabStyle}
             tabsContainerStyle={{width: screenWidth}}
@@ -185,12 +176,12 @@ export default class CheckSplitScreen extends Component<Props> {
             tabTextStyle={styles.tabTextStyle}
             selectedIndex={this.state.selectedIndex}
             onTabPress={this._handleIndexChange}
-          />
+          /> : <View /> }
           <View style={{marginTop: 20, backgroundColor: 'white'}}>
             <FlatList
               style={{marginHorizontal: 20, backgroundColor: 'white'}}
               data={this.state.selectedIndex ? 
-                this.state.data.filter(order => order.buyers.map(buyer => buyer.amazonUserSub).includes(this.state.amazonUserSub)) : 
+                this.state.data.filter(order => order.buyers.map(buyer => buyer.amazonUserSub).includes(this.state.userInfo.amazonUserSub)) : 
                 this.state.data}
               extraData={this.state.refresh}
               keyExtractor={this._keyExtractor}
@@ -199,21 +190,22 @@ export default class CheckSplitScreen extends Component<Props> {
             />
           </View>
           <View style={styles.orderTotalContainer}>
-            <Text style={{color: 'gray'}}>{this.state.selectedIndex ? 'Your Total: ' : 'Group Total: '} </Text>
-            <Text> {this.state.selectedIndex ? `$${this._getindividualTotal()}`: `$${(this.state.subTotal/100).toFixed(2)}`} </Text>
+            <Text style={{color: 'gray'}}>{totalTitle}</Text>
+            <Text> {this.state.selectedIndex ? `$${this._getindividualTotal()}`: `$${(this.state.totals.sub_total/100).toFixed(2)}`} </Text>
           </View>
         </View>
-        <Text style={{color: 'gray'}}>Double Tap the Dishes You've Shared!</Text>
+        {instructionMessage}
         <TouchableOpacity style={styles.confirmBtn} onPress={()=> this.props.navigation.navigate('Confirmation', {
               data: this.state.data, 
+              isGroupCheck: this.state.isGroupCheck,
               restaurantName: this.state.restaurantName,
-              restaurantId: this.state.restaurantId,
-              tax: this.state.tax,
-              subTotal: this.state.subTotal,
-              orderTotal: this.state.orderTotal,
-              amazonUserSub: this.state.amazonUserSub,
+              restaurantAmazonSub: this.state.restaurantAmazonSub,
+              restaurantOmnivoreId: this.state.restaurantOmnivoreId,
+              totals: this.state.totals,
+              ticketId: this.state.ticketId,
               partyId: this.state.partyId,
-              colorMap: this.state.colorMap
+              colorMap: this.state.colorMap,
+              userInfo: this.state.userInfo
             })} color='#000000'>
             <Text style={styles.btnText}>Check out</Text>
         </TouchableOpacity>

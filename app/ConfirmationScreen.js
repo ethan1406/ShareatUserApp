@@ -3,14 +3,12 @@
 
 import React, {Component} from 'react';
 import {StyleSheet, Text, View, TouchableOpacity, 
-  FlatList, Image, ScrollView, Dimensions} from 'react-native';
+  FlatList, Image, Dimensions} from 'react-native';
 import SegmentedControlTab from 'react-native-segmented-control-tab';
 import axios from 'axios';
 import Dialog from 'react-native-dialog';
-import {HeaderBackButton} from 'react-navigation';
 import {baseURL} from './Constants';
 import Card from './models/Card';
-import AsyncStorage from '@react-native-community/async-storage';
 import OrderListItem from './components/OrderListItem';
 import {primaryColor, secondaryColor, darkGray} from './Colors';
 import {headerFontSize} from './Dimensions';
@@ -27,20 +25,33 @@ export default class ConfirmationScreen extends Component<Props> {
     super(props);
 
     var params = this.props.navigation.state.params;
-    var myOrders = params.data.filter(order => order.buyers.map(buyer => buyer.amazonUserSub).includes(params.amazonUserSub));
+    var myOrders = params.isGroupCheck ? 
+      params.data.filter(order => order.buyers.map(buyer => buyer.amazonUserSub).includes(params.userInfo.amazonUserSub))
+      : params.data;
 
-    var individualPrice = myOrders.reduce((total, order) => ( total + order.price/order.buyers.length), 0);
-    var tax = (individualPrice/params.subTotal) * params.tax;
-    var tip = individualPrice * defaultTipRate;
-    var individualTotal = parseInt(individualPrice + tax + tip, 10);
+    var sub_total = params.isGroupCheck ? 
+      myOrders.reduce((total, order) => ( total + order.price/order.buyers.length), 0)
+      : params.totals.sub_total;
+
+    var tax = params.isGroupCheck ? 
+      (sub_total/params.totals.sub_total) * params.tax
+      : params.totals.tax;
+
+    var tip = sub_total * defaultTipRate;
+    var total = params.isGroupCheck ?
+      parseInt(sub_total + tax + tip, 10)
+      : params.totals.total;
 
     this.state = {
       data: myOrders,
       colorMap: params.colorMap,
       restaurantName: params.restaurantName,
-      restaurantId: params.restaurantId,
-      individualPrice: individualPrice,
-      individualTotal: individualTotal,
+      userInfo: params.userInfo,
+      ticketId: params.ticketId,
+      restaurantAmazonSub: params.restaurantAmazonSub,
+      restaurantOmnivoreId: params.restaurantOmnivoreId,
+      total: total,
+      sub_total: sub_total,
       tax: tax,
       tip: tip,
       customTipString: '',
@@ -57,11 +68,11 @@ export default class ConfirmationScreen extends Component<Props> {
 
   static navigationOptions = ({navigation}) => {
     return{
-      headerLeft:( 
+      headerLeft: () =>
           <TouchableOpacity onPress={() => navigation.goBack(null)}>
              <Image style={{height: 30, width: 30, marginLeft: 20, tintColor: primaryColor}} source={require('./img/backbtn.png')} />
           </TouchableOpacity>
-      ),
+      ,
       title: 'Confirmation',
       headerStyle: {
         backgroundColor: secondaryColor,
@@ -87,8 +98,7 @@ export default class ConfirmationScreen extends Component<Props> {
 
   _fetchCards = async () => {
     try {
-        const amazonUserSub = await AsyncStorage.getItem('amazonUserSub');
-        const {data} = await axios.get(`${baseURL}/user/${amazonUserSub}/getCards`);
+        const {data} = await axios.get(`${baseURL}/user/${this.state.userInfo.amazonUserSub}/getCards`);
         var selectedCard;
         data.cards.forEach(card => {
           if(card.selected) {
@@ -126,11 +136,12 @@ export default class ConfirmationScreen extends Component<Props> {
     <OrderListItem
       id={item._id}
       title={item.name}
-      price={item.price/item.buyers.length}
+      price={item.buyers.length == 0 ? item.price : item.price/item.buyers.length}
       buyers={item.buyers}
       partyId={this.state.partyId}
       colorMap={this.state.colorMap}
       confirmation={true}
+      userInfo={this.state.userInfo}
       navigation={this.props.navigation}
     />
   )
@@ -158,13 +169,13 @@ export default class ConfirmationScreen extends Component<Props> {
         dialogVisible: true});
       return;
     }
-    var tip = (this.state.individualPrice) * tipRate;
-    var individualTotal = parseInt(tip + this.state.individualPrice + this.state.tax, 10);
+    var tip = (this.state.sub_total) * tipRate;
+    var total = parseInt(tip + this.state.sub_total + this.state.tax, 10);
     
     this.setState({
       ...this.state,
       selectedIndex: index,
-      individualTotal,
+      total,
       tip
     });
   }
@@ -184,34 +195,37 @@ export default class ConfirmationScreen extends Component<Props> {
   }
 
   _enterCustomTip = () => {
-    var individualTotal = parseInt(this.state.customTip + this.state.individualPrice + this.state.tax, 10);
+    var total = parseInt(this.state.customTip + this.state.sub_total + this.state.tax, 10);
 
     this.setState({
       ...this.state,
-      individualTotal,
+      total,
       tip: this.state.customTip,
       dialogVisible: false
     });
   }
 
   _confirmAndPay = async () => {
-    // try {
-    //   await axios.post(baseURL + '/user/makePayment/', 
-    //     {amount: this.state.individualTotal, 
-    //      tax: this.state.tax,
-    //      tip: this.state.tip,
-    //      points: Math.floor(this.state.individualPrice),  
-    //      restaurantId: this.state.restaurantId,
-    //      partyId: this.state.partyId
-    //     });
-    // } catch (err) {
-    //   console.log(err);
-    // }
+    try {
+      await axios.post(baseURL + '/user/makePayment/', 
+        {subTotal: this.state.sub_total,
+         tax: this.state.tax, 
+         tip: this.state.tip,
+         ticketId: this.state.ticketId,
+         points: Math.floor(this.state.sub_total),  
+         restaurantOmnivoreId: this.state.restaurantOmnivoreId,
+         restaurantAmazonSub: this.state.restaurantAmazonSub,
+         partyId: this.state.partyId
+        });
+    } catch (err) {
+      console.log(err);
+    }
 
     this.props.navigation.navigate('RewardAccumulation', {
-      individualPrice: this.state.individualPrice, 
+      sub_total: this.state.sub_total, 
       restaurantName: this.state.restaurantName,
-      restaurantId: this.state.restaurantId
+      restaurantOmnivoreId: this.state.restaurantOmnivoreId,
+      userInfo: this.state.userInfo
     });
   }
 
@@ -249,11 +263,11 @@ export default class ConfirmationScreen extends Component<Props> {
           <View style={styles.tipContainer}>
               <View style={[styles.totalContainer]} color='#000000'>
                   <Text style={[styles.btnText]}>Total</Text>
-                  <Text style={[styles.rightText]}> {`$${(this.state.individualTotal/100).toFixed(2)}`}</Text>
+                  <Text style={[styles.rightText]}> {`$${(this.state.total/100).toFixed(2)}`}</Text>
               </View>
               <View style={[styles.feeContainer]}>
                 <Text style={{marginLeft: 15}}>Subtotal </Text>
-                <Text style={{marginRight: 15}}>{`$${(this.state.individualPrice/100).toFixed(2)}`}</Text>
+                <Text style={{marginRight: 15}}>{`$${(this.state.sub_total/100).toFixed(2)}`}</Text>
               </View>
               <View style={styles.feeContainer}>
                 <Text style={{marginLeft: 15}}>Tax & Fees </Text>
