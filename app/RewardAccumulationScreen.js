@@ -24,12 +24,10 @@ export default class RewardAccumulationScreen extends Component<Props> {
       merchant: {rewards:[]},
       restaurantName: params.restaurantName,
       pointAccumulated: Math.floor(params.sub_total/100),
-      originalPointsAnimated: new Animated.Value(0),
+      originalPoints: 0,
       errorMessage: '',
       userInfo: params.userInfo
     };
-
-    this.state.originalPointsAnimated.addListener(({value}) => this._value = value);
   }
 
   async componentDidMount() {
@@ -37,48 +35,29 @@ export default class RewardAccumulationScreen extends Component<Props> {
      this._confettiView.startConfetti();
     }
     
-    const {restaurantAmazonSub} = this.props.navigation.state.params;
+    const { restaurantAmazonUserSub } = this.props.navigation.state.params;
 
     try {
-      const response = await axios.get(baseURL + 
-        `/user/getMerchantInfo?restaurantId=${restaurantAmazonSub}`);
 
-      const loyaltyResponse = await axios.get(baseURL + `/user/${this.state.userInfo.amazonUserSub}/loyaltyPoints`);
-      const loyaltyPoints = loyaltyResponse.data;
-      var originalPoints = 0;
-      loyaltyPoints.forEach(loyalty => {
-        if(loyalty.restaurantId == restaurantAmazonSub) {
-          originalPoints = loyalty.points;
-        }
-      });
-      this.state.originalPointsAnimated.setValue(originalPoints);
-      this.setState({merchant : response.data});
-      this._spin();
-      //setTimeout(function(){ this.setState({testing: 50}); }.bind(this), 1000);
+      const { data } = await axios.get(baseURL + 
+        `/user/${this.state.userInfo.amazonUserSub}/getRewards?restaurantAmazonUserSub=${restaurantAmazonUserSub}`);
+
+      this.setState({merchant : data, originalPoints: data.points});
+      setTimeout(function(){ this.setState({originalPoints: this.state.originalPoints + this.state.pointAccumulated}); }.bind(this), 1000);
     } catch (err) {
       console.log(err);
     }
   }
 
-  _spin = () => {
-    Animated.timing(
-      this.state.originalPointsAnimated,
-      {
-        toValue: this.state.originalPointsAnimated._value + this.state.pointAccumulated,
-        duration: 1200,
-        easing: Easing.linear
-      }
-    ).start(() => this.forceUpdate());
-  }
 
   static navigationOptions = ({navigation}) => {
     return {
-      headerRight: ( 
+      headerRight: () =>  
         <TouchableOpacity onPress={() => navigation.navigate('Check')}>
           <Text style={{color: primaryColor, marginRight: 20}}> DONE </Text>
         </TouchableOpacity>
-      ),
-      headerLeft: null,
+      ,
+      headerLeft: ()=> null,
       headerTransparant: true
     };
   }
@@ -94,13 +73,13 @@ export default class RewardAccumulationScreen extends Component<Props> {
               {this.state.merchant.rewards.map((reward, index) => (
                 <TouchableOpacity style={styles.rewardContainer} key={index}>
                   <Text>{reward.reward} </Text>
-                  <Animated.Text style={{color: darkGray, marginTop: 3, marginBottom: 10}}> 
-                    {this.state.originalPointsAnimated._value} / {reward.pointsRequired} pts
-                  </Animated.Text>
+                  <Text style={{color: darkGray, marginTop: 3, marginBottom: 10}}> 
+                    {this.state.originalPoints} / {reward.pointsRequired} pts
+                  </Text>
                   <Progress.Circle showsText={true} animated={true}
-                    progress={this.state.originalPointsAnimated._value/reward.pointsRequired} size={90} color={primaryColor}/>
+                    progress={this.state.originalPoints/reward.pointsRequired} size={90} color={primaryColor}/>
                   <Animated.Text style={{color:darkGray, marginTop: 10}}> 
-                    {reward.pointsRequired - this.state.originalPointsAnimated._value} pts left
+                    {reward.pointsRequired - this.state.originalPoints} pts left
                   </Animated.Text>
                 </TouchableOpacity>
               ))}

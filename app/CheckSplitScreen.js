@@ -1,8 +1,8 @@
 'use strict';
 
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, TouchableOpacity, FlatList, Dimensions,
-   Image, ScrollView, StatusBar} from 'react-native';
+import {Animated, StyleSheet, Text, View, TouchableOpacity, FlatList, Dimensions,
+   Image, StatusBar} from 'react-native';
 import SegmentedControlTab from 'react-native-segmented-control-tab';
 import Pusher from 'pusher-js/react-native';
 import OrderListItem from './components/OrderListItem';
@@ -30,14 +30,19 @@ export default class CheckSplitScreen extends Component<Props> {
     const isGroupCheck = params.members.length == 1 ? false : true;
     const hasPaid = (params.members.find(member => member.amazonUserSub === params.userInfo.amazonUserSub)).hasPaid;
 
+    const opacityValue = isGroupCheck? 1 : 0;
+
+    console.log(params.restaurantAmazonUserSub);
+
     this.state = {
       loading: false,
       data: params.data,
       isGroupCheck: isGroupCheck,
+      fadeAnim: new Animated.Value(opacityValue),
       hasPaid: hasPaid,
       restaurantName: params.restaurantName,
       restaurantOmnivoreId: params.restaurantOmnivoreId,
-      restaurantAmazonSub: params.restaurantAmazonSub,
+      restaurantAmazonUserSub: params.restaurantAmazonUserSub,
       ticketId: params.ticketId,
       totals: params.totals,
       error: null,
@@ -64,6 +69,7 @@ export default class CheckSplitScreen extends Component<Props> {
     this.splittingChannel.bind('new_member', (data) => {
       const colorMap = this._createColorMap(data.members);
       this.setState({isGroupCheck: true, colorMap: colorMap, refresh: !this.state.refresh});
+      this.fadeIn();
     });
   }
 
@@ -106,6 +112,13 @@ export default class CheckSplitScreen extends Component<Props> {
       selectedIndex: index,
     });
   }
+
+  fadeIn = () => {
+    Animated.timing(this.state.fadeAnim, {
+      toValue: 1,
+      duration: 1500
+    }).start();
+  };
 
   _renderItem = ({item}) => (
     <OrderListItem
@@ -168,15 +181,19 @@ export default class CheckSplitScreen extends Component<Props> {
         />
         <View style={{flex: 1, justifyContent: 'flex-start', flexDirection: 'column', height:screenHeight, width:screenWidth}}>
           <Text style={styles.restaurantText}>{this.state.restaurantName}</Text>
-          { isGroupCheck ? <SegmentedControlTab
-            values={['Group Orders', 'My Orders']}
-            tabStyle={styles.tabStyle}
-            tabsContainerStyle={{width: screenWidth}}
-            activeTabStyle={styles.activeTabStyle}
-            tabTextStyle={styles.tabTextStyle}
-            selectedIndex={this.state.selectedIndex}
-            onTabPress={this._handleIndexChange}
-          /> : <View /> }
+          { isGroupCheck ? <Animated.View style={{opacity: this.state.fadeAnim}}>
+                 <SegmentedControlTab
+                values={['Group Orders', 'My Orders']}
+                tabStyle={styles.tabStyle}
+                tabsContainerStyle={{width: screenWidth}}
+                activeTabStyle={styles.activeTabStyle}
+                tabTextStyle={styles.tabTextStyle}
+                activeTabTextStyle={styles.activeTabTextStyle}
+                firstTabStyle={{borderRightWidth: 0}}
+                selectedIndex={this.state.selectedIndex}
+                onTabPress={this._handleIndexChange}
+              /> 
+            </Animated.View> : <View /> }
           <View style={{marginTop: 20, backgroundColor: 'white'}}>
             <FlatList
               style={{marginHorizontal: 20, backgroundColor: 'white'}}
@@ -199,7 +216,7 @@ export default class CheckSplitScreen extends Component<Props> {
               data: this.state.data, 
               isGroupCheck: this.state.isGroupCheck,
               restaurantName: this.state.restaurantName,
-              restaurantAmazonSub: this.state.restaurantAmazonSub,
+              restaurantAmazonUserSub: this.state.restaurantAmazonUserSub,
               restaurantOmnivoreId: this.state.restaurantOmnivoreId,
               totals: this.state.totals,
               ticketId: this.state.ticketId,
@@ -235,15 +252,20 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between'
   },
   activeTabStyle: {
-    backgroundColor: '#ffa91f'
+    backgroundColor: 'white',
+    borderColor: primaryColor,
+    borderBottomWidth: 2,
+    borderWidth: 0
   },
   tabStyle: {
-    borderColor:'#F3A545',
-    height: 35,
+    backgroundColor: 'transparent',
     borderWidth: 0
   },
   tabTextStyle: {
-    color: '#F3A545'
+    color: darkGray
+  },
+  activeTabTextStyle: {
+    color: primaryColor
   },
   restaurantText: {
     alignSelf: 'flex-start',

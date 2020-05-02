@@ -42,13 +42,15 @@ export default class ConfirmationScreen extends Component<Props> {
       parseInt(sub_total + tax + tip, 10)
       : params.totals.total;
 
+    console.log(params.restaurantAmazonUserSub);
+
     this.state = {
       data: myOrders,
       colorMap: params.colorMap,
       restaurantName: params.restaurantName,
       userInfo: params.userInfo,
       ticketId: params.ticketId,
-      restaurantAmazonSub: params.restaurantAmazonSub,
+      restaurantAmazonUserSub: params.restaurantAmazonUserSub,
       restaurantOmnivoreId: params.restaurantOmnivoreId,
       total: total,
       sub_total: sub_total,
@@ -206,26 +208,27 @@ export default class ConfirmationScreen extends Component<Props> {
   }
 
   _confirmAndPay = async () => {
-    try {
-      await axios.post(baseURL + '/user/makePayment/', 
-        {subTotal: this.state.sub_total,
-         tax: this.state.tax, 
-         tip: this.state.tip,
-         ticketId: this.state.ticketId,
-         points: Math.floor(this.state.sub_total),  
-         restaurantOmnivoreId: this.state.restaurantOmnivoreId,
-         restaurantAmazonSub: this.state.restaurantAmazonSub,
-         partyId: this.state.partyId
-        });
-    } catch (err) {
-      console.log(err);
-    }
+    // try {
+    //   await axios.post(baseURL + '/user/makePayment/', 
+    //     {subTotal: this.state.sub_total,
+    //      tax: this.state.tax, 
+    //      tip: this.state.tip,
+    //      ticketId: this.state.ticketId,
+    //      points: Math.floor(this.state.sub_total),  
+    //      restaurantOmnivoreId: this.state.restaurantOmnivoreId,
+    //      restaurantAmazonUserSub: this.state.restaurantAmazonUserSub,
+    //      partyId: this.state.partyId
+    //     });
+    // } catch (err) {
+    //   console.log(err);
+    // }
 
     this.props.navigation.navigate('RewardAccumulation', {
       sub_total: this.state.sub_total, 
       restaurantName: this.state.restaurantName,
       restaurantOmnivoreId: this.state.restaurantOmnivoreId,
-      userInfo: this.state.userInfo
+      userInfo: this.state.userInfo,
+      restaurantAmazonUserSub: this.state.restaurantAmazonUserSub
     });
   }
 

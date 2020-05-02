@@ -15,12 +15,14 @@ class QrCodeScreen extends Component<Props> {
   constructor(props) {
     super(props);
     this.state = { 
-     };
+      message: 'Scan Shareat QR Code',
+      messageColor: 'white'
+    };
   }
 
   static navigationOptions = ({navigation}) => {
     return{
-      headerShown: false,
+      headerShown: false
     };
   }
 
@@ -47,9 +49,10 @@ class QrCodeScreen extends Component<Props> {
   }
 
   async onSuccess(e) {
-    const results = e.data.match('https://www.shareatpay.com/party/');
+    const results = e.data.match('https://api.shareatpay.com/party/');
     if (results == null) {
       this.waitAndreactivate();
+      this.setState({message: 'This is not a valid Shareat QR Code', messageColor: 'red'});
     } else {
       try {
         const amazonUserSub = await AsyncStorage.getItem('amazonUserSub');
@@ -70,13 +73,14 @@ class QrCodeScreen extends Component<Props> {
           members: response.data.members,
           partyId: response.data._id,
           restaurantOmnivoreId: response.data.restaurant_omnivore_id,
-          restaurantAmazonSub: response.data.restaurantAmazonSub,
+          restaurantAmazonUserSub: response.data.restaurantAmazonUserSub,
           userInfo: userInfo
         });
 
       } catch (err) {
         console.log(err);
         this.waitAndreactivate();
+        this.setState({message: 'There is no check for this table at the moment', messageColor: 'red'});
       }
     }
 
@@ -103,7 +107,7 @@ class QrCodeScreen extends Component<Props> {
             cameraProps={{captureAudio: false}}
             cameraStyle={{alignSelf:'center', height: '200%'}}
             containerStyle={{alignItems:'space-between'}}
-            bottomContent={<Text style={{color: 'white', fontSize: 16}}> Scan Shareat QR Code </Text>}
+            bottomContent={<Text style={{color: this.state.messageColor, fontSize: 16}}> {this.state.message} </Text>}
           />
         );
   }

@@ -33,7 +33,7 @@ import {headerFontSize} from './Dimensions';
         const response = await axios.get(baseURL + `/user/${amazonUserSub}/loyaltyPoints`);
 
         let promises = await response.data.map( async (reward) => {
-            var restaurant = new Restaurant(reward.restaurantId, reward.restaurantName, 
+            var restaurant = new Restaurant(reward.restaurantAmazonUserSub, reward.restaurantName, 
               reward.address, reward.description);
             try{
               const imageUrl = await Storage.get(`restaurants/${reward.restaurantName}/cover.jpg`);
@@ -69,9 +69,9 @@ import {headerFontSize} from './Dimensions';
       };
     }
 
-    _lookupRestaurant = (restaurantId, restaurantName) => {
+    _lookupRestaurant = (restaurantAmazonUserSub, restaurantName) => {
       this.props.navigation.navigate('Restaurant', {
-        restaurantName, restaurantId
+        restaurantName, restaurantAmazonUserSub
       });
     }
     render() {
@@ -93,7 +93,7 @@ import {headerFontSize} from './Dimensions';
               <Text style={styles.wallet}> Wallet </Text>
               {this.state.restaurants.map((restaurant, index) => (
                   <TouchableOpacity style={styles.rewardContainer} key={index} 
-                    onPress={()=>{this._lookupRestaurant(restaurant.restaurantId, restaurant.name);}}>
+                    onPress={()=>{this._lookupRestaurant(restaurant.restaurantAmazonUserSub, restaurant.name);}}>
                     <Image style={styles.restaurantIcon}
                           source={{uri: restaurant.imageUrl}}/>
                     <View style={{flexDirection: 'column', flex: 1}}>
@@ -110,7 +110,7 @@ import {headerFontSize} from './Dimensions';
               </View>
               {this.state.restaurants.map((restaurant, index) => (
                 <TouchableOpacity style={styles.rewardContainer} key={index} 
-                  onPress={()=>{this._lookupRestaurant(restaurant.restaurantId, restaurant.name);}}>
+                  onPress={()=>{this._lookupRestaurant(restaurant.restaurantAmazonUserSub, restaurant.name);}}>
                   <Image style={styles.restaurantIcon}
                         source={{uri: restaurant.imageUrl}}/>
                     <View style={{flexDirection: 'column', flex: 1}}>
