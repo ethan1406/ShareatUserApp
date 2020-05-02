@@ -22,6 +22,7 @@ import OrderBuyerScreen from './OrderBuyerScreen';
 import PaymentMethodsScreen from './PaymentMethodsScreen';
 import EditProfileScreen from './EditProfileScreen';
 import ForgotPasswordScreen from './ForgotPasswordScreen';
+import RewardRedemptionScreen from './RewardRedemptionScreen';
 import {primaryColor, darkGray} from './Colors';
 
 
@@ -79,7 +80,8 @@ const OptionNavigator = createStackNavigator(
 const RewardNavigator = createStackNavigator(
 {
   Rewards: RewardsScreen,
-  Restaurant: RestaurantScreen
+  Restaurant: RestaurantScreen,
+  Redeem: RewardRedemptionScreen
 }
 );
 
