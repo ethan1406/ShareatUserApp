@@ -82,8 +82,7 @@ const RewardNavigator = createStackNavigator(
   Rewards: RewardsScreen,
   Restaurant: RestaurantScreen,
   Redeem: RewardRedemptionScreen
-}
-);
+});
 
 
 const main = createBottomTabNavigator({

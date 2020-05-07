@@ -85,7 +85,6 @@ import {headerFontSize} from './Dimensions';
           <View style={styles.noRewardsView}>
               <Text style={styles.noRewardsText}> You have no rewards currently.</Text>
                <Text style={styles.noRewardsText}> Start collecting rewards at Shareat partnered restaurants.</Text>
-               <Button title='redeem reward testing' onPress={()=>{this.props.navigation.navigate('Redeem');}}/>
           </View>;
         } else {
           userRewardsView = 

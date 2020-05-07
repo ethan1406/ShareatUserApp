@@ -1,8 +1,9 @@
 'use strict';
 import React, {Component} from 'react';
-import {StyleSheet, View, Button, Text, Alert, TouchableOpacity, Image}from 'react-native';
+import {StyleSheet, View, Text, Alert, TouchableOpacity, Image, Modal}from 'react-native';
 import {primaryColor, secondaryColor, darkGray} from './Colors';
 import {headerFontSize} from './Dimensions';
+import AsyncStorage from '@react-native-community/async-storage';
 
 type Props = {};
 export default class RewardRedemptionScreen extends Component<Props> {
@@ -37,7 +38,53 @@ export default class RewardRedemptionScreen extends Component<Props> {
 		};
 	}
 
+
+	async componentDidMount() {
+		var m, s, t;
+		try {
+				m = parseInt(await AsyncStorage.getItem('timer_mins'));
+				s = parseInt(await AsyncStorage.getItem('timer_secs'));
+				t = parseInt(await AsyncStorage.getItem('timestamp'));
+				// console.log(m + ' ' + s + ' ' + t);
+		} catch (e) {
+			console.log(e);
+		}
+		if (m != null && s != null) {
+			var currentDate = new Date();
+			var timeDiff = (currentDate.getTime() - t) / 1000;
+			m -= Math.floor(timeDiff / 60);
+			s -= timeDiff % 60;
+			if (s < 0) {
+				s += 60;
+				m--;
+			}
+			// console.log(timeDiff + ' ' + m + ' ' + s);
+			if (m >=0 && s >= 1) {
+				this.setState({
+					show: true,
+					min: Math.round(m),
+					sec: Math.round(s),
+				});
+				this._countdown();
+			}
+		}
+	}
+
+	async componentWillUnmount() {
+		var currentDate = new Date();
+		try {
+			AsyncStorage.setItem('timer_mins', this.state.min.toString());
+			AsyncStorage.setItem('timer_secs', this.state.sec.toString());
+			AsyncStorage.setItem('timestamp', currentDate.getTime().toString());
+		} catch (e) {
+			console.log(e);
+		}
+	}
+
 	_countdown() {
+		this.setState({
+			show: true,
+		});
 		this.myInterval = setInterval(() => {
 			if (this.state.sec == 0 && this.state.min != 0) {
 				this.setState({
@@ -64,7 +111,7 @@ export default class RewardRedemptionScreen extends Component<Props> {
 			{this.state.show ? 
 				(<Text style={styles.countdown}>{this.state.min}:{("0" + this.state.sec).slice(-2)}</Text>) :
 				 <Text style={styles.message}>By redeeming this reward, {this.state.itemLoyaltyPointCost} loyalty points will be deducted from your current balance.</Text>}
-			<View style={styles.button}><Button color={primaryColor} title='Redeem' disabled={this.state.show}
+			<TouchableOpacity style={[styles.signupBtn,{backgroundColor:this.state.show ? 'gray' : primaryColor}]} title='Redeem' disabled={this.state.show}
 			onPress={()=>{Alert.alert(
 				"Are you sure?",
 				"You have two minutes to redeem the item",
@@ -75,12 +122,12 @@ export default class RewardRedemptionScreen extends Component<Props> {
 					style: "cancel"
 				},
 				{ text: "OK", onPress: () => {this._countdown();
-					this.state.show = true;
-					} }
+				} }
 				],
 				{ cancelable: false }
-				);}}/>
-			</View>
+				);}}>
+			<Text style={styles.btnText}>Redeem</Text>
+			</TouchableOpacity>
 			</View>
 		);
 	}
@@ -94,7 +141,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 	},
 	info: {
-		paddingTop: 20,
+		paddingTop: 50,
 		alignItems: 'center',
 	},
 	restaurant: {
@@ -104,15 +151,39 @@ const styles = StyleSheet.create({
 		paddingTop: 10,
 		fontSize: 25,
 	},
-	button: {
-		width: '100%',
-	},
 	countdown: {
 		fontSize: 100,
+		color: 'white',
+		textAlign: 'center',
+		textAlignVertical: 'center',
+		backgroundColor: primaryColor,
+		height: 280,
+		width: 280,
+		borderWidth: 5,
+		borderColor: 'yellow',
+		borderRadius: 140,
 	},
 	message:{
 		width: '70%',
 		fontSize: 15,
 		color: darkGray,
 	},
+	signupBtn: {
+		marginBottom: 60,
+		width: '80%',
+		height: 45,
+		borderRadius: 40,
+		alignItems: 'center',
+        shadowColor: 'rgba(0,0,0, .4)', // IOS
+        shadowOffset: { height: 1, width: 1 }, // IOS
+        shadowOpacity: 1, // IOS
+        shadowRadius: 1, //IOS
+        elevation: 2 // Android
+    },
+        btnText: {
+        color:'white',
+        textAlign:'center',
+        paddingTop: 11,
+        fontSize: 15,
+    },
 });
