@@ -61,6 +61,7 @@ export default class ConfirmationScreen extends Component<Props> {
       selectedIndex: 0,
       partyId: params.partyId,
       refresh: false,
+      remainingBalance: 0, 
       dialogVisible: false,
       selectedCard: {_id:'', last4Digits: 0, selected:false, type:''}
     };
@@ -207,28 +208,30 @@ export default class ConfirmationScreen extends Component<Props> {
   }
 
   _confirmAndPay = async () => {
-    // try {
-    //   await axios.post(baseURL + '/user/makePayment/', 
-    //     {subTotal: this.state.sub_total,
-    //      tax: this.state.tax, 
-    //      tip: this.state.tip,
-    //      ticketId: this.state.ticketId,
-    //      points: Math.floor(this.state.sub_total),  
-    //      restaurantOmnivoreId: this.state.restaurantOmnivoreId,
-    //      restaurantAmazonUserSub: this.state.restaurantAmazonUserSub,
-    //      partyId: this.state.partyId
-    //     });
-    // } catch (err) {
-    //   console.log(err);
-    // }
+    try {
 
-    this.props.navigation.navigate('RewardAccumulation', {
-      sub_total: this.state.sub_total, 
-      restaurantName: this.state.restaurantName,
-      restaurantOmnivoreId: this.state.restaurantOmnivoreId,
-      userInfo: this.state.userInfo,
-      restaurantAmazonUserSub: this.state.restaurantAmazonUserSub
-    });
+      await axios.post(baseURL + `/user/${this.state.userInfo.amazonUserSub}/makePayment/`, 
+        {subTotal: this.state.sub_total,
+         tax: this.state.tax, 
+         tip: this.state.tip,
+         ticketId: this.state.ticketId,
+         points: Math.floor(this.state.sub_total),  
+         restaurantOmnivoreId: this.state.restaurantOmnivoreId,
+         restaurantAmazonUserSub: this.state.restaurantAmazonUserSub,
+         partyId: this.state.partyId
+      });
+
+      this.props.navigation.navigate('RewardAccumulation', {
+        sub_total: this.state.sub_total, 
+        restaurantName: this.state.restaurantName,
+        restaurantOmnivoreId: this.state.restaurantOmnivoreId,
+        userInfo: this.state.userInfo,
+        restaurantAmazonUserSub: this.state.restaurantAmazonUserSub
+      });
+    } catch (err) {
+      console.log(err);
+    }
+    
   }
 
 
@@ -251,17 +254,15 @@ export default class ConfirmationScreen extends Component<Props> {
           <View style={[styles.signupBtn]} color='#000000'>
               <Text style={[styles.btnText]}>Orders</Text>
           </View>
-          <View style={{backgroundColor: 'white'}}>
-            <View style={styles.flastListContainer}>
-              <FlatList
-                data={this.state.data}
-                extraData={this.state.refresh}
-                keyExtractor={this._keyExtractor}
-                renderItem={this._renderItem}
-                ListHeaderComponent={this._renderHeader}
-              />
-            </View>
-          </View>
+          <FlatList
+            style={styles.flastListContainer}
+            data={this.state.data}
+            extraData={this.state.refresh}
+            keyExtractor={this._keyExtractor}
+            renderItem={this._renderItem}
+            bounces={false}
+            ListHeaderComponent={this._renderHeader}
+          />
           <View style={styles.tipContainer}>
               <View style={[styles.totalContainer]} color='#000000'>
                   <Text style={[styles.btnText]}>Total</Text>
@@ -277,6 +278,10 @@ export default class ConfirmationScreen extends Component<Props> {
               </View>
               <View style={styles.feeContainer}>
                 <Text style={{marginLeft: 15}}>Tip </Text>
+                <Text style={{marginRight: 15}}>{`$${(this.state.tip/100).toFixed(2)}`}</Text>
+              </View>
+              <View style={styles.feeContainer}>
+                <Text style={{marginLeft: 15}}>Remaining Table Balance </Text>
                 <Text style={{marginRight: 15}}>{`$${(this.state.tip/100).toFixed(2)}`}</Text>
               </View>
               <View style={[styles.feeContainer, {justifyContent: 'center'}]}>

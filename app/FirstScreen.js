@@ -2,7 +2,7 @@
 
 import React, {Component} from 'react';
 import {StyleSheet, Text, View, Image, TouchableOpacity, ImageBackground, StatusBar} from 'react-native';
-import SafeAreaView from 'react-native-safe-area-view';
+import axios from 'axios';
 import AsyncStorage from '@react-native-community/async-storage';
 import {primaryColor, secondaryColor, darkGray} from './Colors';
 
@@ -26,6 +26,10 @@ export default class FirstScreen extends Component<Props> {
   async componentDidMount() {
       try {
         const user = await Auth.currentAuthenticatedUser();
+        const session = await Auth.currentSession();
+        const jwt = session.getAccessToken().getJwtToken();
+        const bearerToken = 'Bearer ' + jwt;
+        axios.defaults.headers.common['Authorization'] = bearerToken;
 
         this.props.navigation.navigate('QR');
 

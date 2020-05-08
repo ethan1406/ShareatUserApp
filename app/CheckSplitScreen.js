@@ -215,7 +215,7 @@ export default class CheckSplitScreen extends Component<Props> {
           backgroundColor= {secondaryColor}
           barStyle="dark-content"
         />
-        <View style={{flex: 1, justifyContent: 'flex-start', flexDirection: 'column', height:screenHeight, width:screenWidth}}>
+        <View style={{flex: 1, justifyContent: 'flex-start', flexDirection: 'column'}}>
           <Text style={styles.restaurantText}>{this.state.restaurantName}</Text>
           { isGroupCheck ? <Animated.View style={{opacity: this.state.fadeAnim}}>
                  <SegmentedControlTab
@@ -230,18 +230,17 @@ export default class CheckSplitScreen extends Component<Props> {
                 onTabPress={this._handleIndexChange}
               /> 
             </Animated.View> : <View /> }
-          <View style={{marginTop: 20, backgroundColor: 'white'}}>
             <FlatList
-              style={{marginHorizontal: 20, backgroundColor: 'white'}}
+              style={{marginHorizontal: 20, backgroundColor: 'white', marginTop: 20}}
               data={this.state.selectedIndex ? 
                 this.state.data.filter(order => order.buyers.map(buyer => buyer.amazonUserSub).includes(this.state.userInfo.amazonUserSub)) : 
                 this.state.data}
               extraData={this.state.refresh}
               keyExtractor={this._keyExtractor}
               renderItem={this._renderItem}
+              bounces= {false}
               ListHeaderComponent={this._renderHeader}
             />
-          </View>
           <View style={styles.orderTotalContainer}>
             <Text style={{color: 'gray'}}>{totalTitle}</Text>
             <Text> {this.state.selectedIndex ? `$${this._getindividualTotal()}`: `$${(this.state.totals.sub_total/100).toFixed(2)}`} </Text>
