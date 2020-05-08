@@ -2,10 +2,11 @@
 'use strict';
 
 import React, {Component} from 'react';
-import {Text, StatusBar} from 'react-native';
+import {Text} from 'react-native';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import {primaryColor} from './Colors';
 import AsyncStorage from '@react-native-community/async-storage';
+import { Auth } from 'aws-amplify';
 
 import axios from 'axios';
 
@@ -26,7 +27,10 @@ class QrCodeScreen extends Component<Props> {
     };
   }
 
-  componentDidMount() {
+  async componentDidMount() {
+    const user = await Auth.currentSession();
+    const jwt = user.getAccessToken().getJwtToken();
+    console.log (jwt);
     // axios.get('https://www.shareatpay.com/party/5b346f48d585fb0e7d3ed3fc/6').then((response) => {
     //   this.props.navigation.navigate('Check', {
     //     data: response.data.orders, 
@@ -45,7 +49,8 @@ class QrCodeScreen extends Component<Props> {
   waitAndreactivate() {
      setTimeout(() => {
         this.scanner.reactivate();
-     }, 1000);
+        this.setState({message: 'Scan Shareat QR Code', messageColor: 'white'});
+     }, 2000);
   }
 
   async onSuccess(e) {

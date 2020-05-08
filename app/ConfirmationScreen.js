@@ -34,7 +34,7 @@ export default class ConfirmationScreen extends Component<Props> {
       : params.totals.sub_total;
 
     var tax = params.isGroupCheck ? 
-      (sub_total/params.totals.sub_total) * params.tax
+      (sub_total/params.totals.sub_total) * params.totals.tax
       : params.totals.tax;
 
     var tip = sub_total * defaultTipRate;
@@ -42,7 +42,6 @@ export default class ConfirmationScreen extends Component<Props> {
       parseInt(sub_total + tax + tip, 10)
       : params.totals.total;
 
-    console.log(params.restaurantAmazonUserSub);
 
     this.state = {
       data: myOrders,
@@ -273,7 +272,7 @@ export default class ConfirmationScreen extends Component<Props> {
                 <Text style={{marginRight: 15}}>{`$${(this.state.sub_total/100).toFixed(2)}`}</Text>
               </View>
               <View style={styles.feeContainer}>
-                <Text style={{marginLeft: 15}}>Tax & Fees </Text>
+                <Text style={{marginLeft: 15}}>Tax </Text>
                 <Text style={{marginRight: 15}}>{`$${(this.state.tax/100).toFixed(2)}`}</Text>
               </View>
               <View style={styles.feeContainer}>

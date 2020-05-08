@@ -1,8 +1,7 @@
 'use strict';
 
 import React, {Component} from 'react';
-import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import {StyleSheet, Text, View, TouchableOpacity, Image} from 'react-native';
 import {baseURL} from '../Constants';
 import {secondaryColor, darkGray} from '../Colors';
 import axios from 'axios';
@@ -57,10 +56,10 @@ export default class OrderListItem extends Component<Props> {
                     <Text style={{color: 'white'}}>{buyer.firstName[0]}{buyer.lastName[0]}</Text>
                   </View>
                   {buyer.finished ? 
-                    ( <FontAwesome
-                        name={'check-circle'}
-                        size={15}
-                        style={{color: 'green', position: 'absolute', left: 17, top: 12}}
+                    ( 
+                      <Image
+                        source={require('../img/check-circle.png')}
+                        style={{ height: 15, width: 15,  position: 'absolute', left: 17, top: 12 }}
                       />) : null}
                 </View>
                 );

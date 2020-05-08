@@ -3,7 +3,7 @@
 
 import React, {Component} from 'react';
 import {StyleSheet, Text, View, TouchableOpacity,
-  ScrollView, Animated, Easing} from 'react-native';
+  ScrollView} from 'react-native';
 import * as Progress from 'react-native-progress';
 //import Confetti from 'react-native-confetti';
 import axios from 'axios';
@@ -78,9 +78,9 @@ export default class RewardAccumulationScreen extends Component<Props> {
                   </Text>
                   <Progress.Circle showsText={true} animated={true}
                     progress={this.state.originalPoints/reward.pointsRequired} size={90} color={primaryColor}/>
-                  <Animated.Text style={{color:darkGray, marginTop: 10}}> 
+                  <Text style={{color:darkGray, marginTop: 10}}> 
                     {reward.pointsRequired - this.state.originalPoints} pts left
-                  </Animated.Text>
+                  </Text>
                 </TouchableOpacity>
               ))}
           </ScrollView>

@@ -39,10 +39,12 @@ class SignupScreen extends Component<Props> {
             case 'signIn':
                 try {
                   const user = await Auth.currentAuthenticatedUser();
+                  this._attachAuthorizationHeaderToAxios();
                   this._saveUserToDB(user.signInUserSession.idToken.payload);
                   this.props.navigation.navigate('QR');
                 } catch(err) {
                   console.log(err);
+                  this.setState({errorMessage: 'Please try again.'});
                 }
                 break;
             default:
@@ -54,6 +56,13 @@ class SignupScreen extends Component<Props> {
      this._verifyEmail = this._verifyEmail.bind(this);
      this._resendEmail = this._resendEmail.bind(this);
      this._saveUserToDB = this._saveUserToDB.bind(this);
+  }
+
+  async _attachAuthorizationHeaderToAxios() {
+      const session = await Auth.currentSession();
+      const jwt = session.getAccessToken().getJwtToken();
+      const bearerToken = 'Bearer ' + jwt;
+      axios.defaults.headers.common['Authorization'] = bearerToken;
   }
 
   async _signup() {
@@ -97,6 +106,7 @@ class SignupScreen extends Component<Props> {
         console.log(this.state.email);
         await Auth.confirmSignUp(this.state.email, this.state.confirmationCode);
         const user = await Auth.signIn(this.state.email, this.state.pwd);
+        this._attachAuthorizationHeaderToAxios();
         this._saveUserToDB(user.attributes);
         this.props.navigation.navigate('QR');
       } catch(err) {

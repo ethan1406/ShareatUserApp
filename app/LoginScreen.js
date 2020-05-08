@@ -29,10 +29,12 @@ class LoginScreen extends Component<Props> {
             case 'signIn':
                 try {
                   const user = await Auth.currentAuthenticatedUser();
+                  this._attachAuthorizationHeaderToAxios();
                   this._saveUserToDB(user.signInUserSession.idToken.payload);
                   this.props.navigation.navigate('QR');
                 } catch(err) {
                   console.log(err);
+                  this.setState({errorMessage: 'Please try logging in again.'});
                 }
                 break;
             default:
@@ -52,6 +54,13 @@ class LoginScreen extends Component<Props> {
     };
   }
 
+  async _attachAuthorizationHeaderToAxios() {
+      const session = await Auth.currentSession();
+      const jwt = session.getAccessToken().getJwtToken();
+      const bearerToken = 'Bearer ' + jwt;
+      axios.defaults.headers.common['Authorization'] = bearerToken;
+  }
+
   async _login() {
     if(this.state.email.trim().toLowerCase() === '') {
       this.setState({errorMessage: 'Please enter your email'});
@@ -65,6 +74,7 @@ class LoginScreen extends Component<Props> {
 
     try {
       const user = await Auth.signIn(this.state.email.trim().toLowerCase(), this.state.pwd.trim());
+      this._attachAuthorizationHeaderToAxios();
       await AsyncStorage.setItem('email', user.attributes.email);
       await AsyncStorage.setItem('amazonUserSub', user.attributes.sub);
       await AsyncStorage.setItem('firstName', user.attributes.given_name);

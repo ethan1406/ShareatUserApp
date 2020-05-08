@@ -32,11 +32,10 @@ export default class CheckSplitScreen extends Component<Props> {
 
     const opacityValue = isGroupCheck? 1 : 0;
 
-    console.log(params.restaurantAmazonUserSub);
-
     this.state = {
       loading: false,
       data: params.data,
+      members: params.members,
       isGroupCheck: isGroupCheck,
       fadeAnim: new Animated.Value(opacityValue),
       hasPaid: hasPaid,
@@ -68,9 +67,25 @@ export default class CheckSplitScreen extends Component<Props> {
 
     this.splittingChannel.bind('new_member', (data) => {
       const colorMap = this._createColorMap(data.members);
-      this.setState({isGroupCheck: true, colorMap: colorMap, refresh: !this.state.refresh});
-      this.fadeIn();
+
+      const wasNotGroup = this.state.isGroupCheck;
+      this.setState({isGroupCheck: true, members: data.members, colorMap: colorMap, refresh: !this.state.refresh});
+
+      if (!wasNotGroup) {
+        this.fadeIn();
+      }
     });
+
+    this.splittingChannel.bind('payment_complete', (data) => {
+      this.setState({data: data.orders, members: data.members, refresh: !this.state.refresh});
+    });
+
+
+    this.splittingChannel.bind('orders_changed', (data) => {
+      this.setState({data: data.orders, totals: data.totals, refresh: !this.state.refresh});
+    });
+
+    this.segueWayToConfirmation = this.segueWayToConfirmation.bind(this);
   }
 
   static navigationOptions = ({navigation}) => {
@@ -128,7 +143,7 @@ export default class CheckSplitScreen extends Component<Props> {
       buyers={item.buyers}
       partyId={this.state.partyId}
       colorMap={this.state.colorMap}
-      confirmation={!this.state.isGroupCheck}
+      confirmation={(!this.state.isGroupCheck) || this.state.hasPaid || (item.buyers.filter(buyer => buyer.finished)).length > 0}
       userInfo={this.state.userInfo}
       navigation={this.props.navigation}
     />
@@ -147,6 +162,28 @@ export default class CheckSplitScreen extends Component<Props> {
               <Text style={{color: 'gray'}}>Item</Text>
               <Text style={{color: 'gray'}}>{priceTag}</Text>
             </View>;
+  }
+
+  segueWayToConfirmation() {
+
+    // if all other members have paid, the last person pays the remainder
+    var shouldPayRemainder = this.state.members.length > 1 
+        && (this.state.members.filter(member => member.hasPaid == false)).length == 1 ;
+
+  
+    this.props.navigation.navigate('Confirmation', {
+          data: this.state.data, 
+          isGroupCheck: this.state.isGroupCheck,
+          restaurantName: this.state.restaurantName,
+          restaurantAmazonUserSub: this.state.restaurantAmazonUserSub,
+          restaurantOmnivoreId: this.state.restaurantOmnivoreId,
+          totals: this.state.totals,
+          ticketId: this.state.ticketId,
+          partyId: this.state.partyId,
+          colorMap: this.state.colorMap,
+          userInfo: this.state.userInfo,
+          shouldPayRemainder: shouldPayRemainder
+        });
   }
 
 
@@ -171,7 +208,6 @@ export default class CheckSplitScreen extends Component<Props> {
     } else if (isGroupCheck) {
       instructionMessage = <Text style={{color: 'gray'}}>Double Tap the Dishes You've Shared!</Text>;
     } 
-
 
     return (
       <View style={styles.container} resizeMode='contain'>
@@ -212,18 +248,8 @@ export default class CheckSplitScreen extends Component<Props> {
           </View>
         </View>
         {instructionMessage}
-        <TouchableOpacity style={styles.confirmBtn} onPress={()=> this.props.navigation.navigate('Confirmation', {
-              data: this.state.data, 
-              isGroupCheck: this.state.isGroupCheck,
-              restaurantName: this.state.restaurantName,
-              restaurantAmazonUserSub: this.state.restaurantAmazonUserSub,
-              restaurantOmnivoreId: this.state.restaurantOmnivoreId,
-              totals: this.state.totals,
-              ticketId: this.state.ticketId,
-              partyId: this.state.partyId,
-              colorMap: this.state.colorMap,
-              userInfo: this.state.userInfo
-            })} color='#000000'>
+        <TouchableOpacity style={[styles.confirmBtn, {backgroundColor: this.state.hasPaid ? darkGray : primaryColor}]} 
+          disabled={this.state.hasPaid} onPress={this.segueWayToConfirmation} color='#000000'>
             <Text style={styles.btnText}>Check out</Text>
         </TouchableOpacity>
       </View>
@@ -279,7 +305,6 @@ const styles = StyleSheet.create({
   confirmBtn: {
     width: '100%',
     height: 40,
-    backgroundColor: primaryColor,
     borderRadius: 0,
     alignItems: 'center',
     marginRight:20,
