@@ -1,18 +1,17 @@
 'use strict';
 import React, {Component} from 'react';
-import {StyleSheet, View, Text, Alert, TouchableOpacity, Image, Modal}from 'react-native';
+import {StyleSheet, View, Text, Alert, TouchableOpacity, Image}from 'react-native';
 import {primaryColor, secondaryColor, darkGray} from './Colors';
 import {headerFontSize} from './Dimensions';
-import AsyncStorage from '@react-native-community/async-storage';
+import BackgroundTimer from 'react-native-background-timer';
 
 type Props = {};
+var min = 2;
+var sec = 0;
 export default class RewardRedemptionScreen extends Component<Props> {
 	constructor(props) {
 		super(props);
 		this.state = {
-			min: 2,
-			sec: 0,
-			show: false,
 			restaurant: 'Dodge Dealership',
 			rewardTitle: 'One Free Hellcat',
 			itemLoyaltyPointCost: 62000,
@@ -38,67 +37,35 @@ export default class RewardRedemptionScreen extends Component<Props> {
 		};
 	}
 
-
 	async componentDidMount() {
-		var m, s, t;
-		try {
-				m = parseInt(await AsyncStorage.getItem('timer_mins'));
-				s = parseInt(await AsyncStorage.getItem('timer_secs'));
-				t = parseInt(await AsyncStorage.getItem('timestamp'));
-				// console.log(m + ' ' + s + ' ' + t);
-		} catch (e) {
-			console.log(e);
-		}
-		if (m != null && s != null) {
-			var currentDate = new Date();
-			var timeDiff = (currentDate.getTime() - t) / 1000;
-			m -= Math.floor(timeDiff / 60);
-			s -= timeDiff % 60;
-			if (s < 0) {
-				s += 60;
-				m--;
-			}
-			// console.log(timeDiff + ' ' + m + ' ' + s);
-			if (m >=0 && s >= 1) {
-				this.setState({
-					show: true,
-					min: Math.round(m),
-					sec: Math.round(s),
-				});
-				this._countdown();
-			}
+		if (min != 2 && sec != 0) {
+			this._countdown();
 		}
 	}
 
-	async componentWillUnmount() {
-		var currentDate = new Date();
-		try {
-			AsyncStorage.setItem('timer_mins', this.state.min.toString());
-			AsyncStorage.setItem('timer_secs', this.state.sec.toString());
-			AsyncStorage.setItem('timestamp', currentDate.getTime().toString());
-		} catch (e) {
-			console.log(e);
-		}
-	}
-
-	_countdown() {
+	async _countdown() {
 		this.setState({
-			show: true,
+			min: min,
+			sec: sec,
 		});
-		this.myInterval = setInterval(() => {
+		BackgroundTimer.stopBackgroundTimer();
+		BackgroundTimer.runBackgroundTimer(() => { 
 			if (this.state.sec == 0 && this.state.min != 0) {
+				min--;
+				sec = 59;
 				this.setState({
-					min: this.state.min - 1,
-					sec: 59,
+					min: min,
+					sec: sec,
 				});
 			} else if (this.state.sec == 0 && this.state.min == 0) {
-				clearInterval(this.myInterval);
+				BackgroundTimer.stopBackgroundTimer();
 			} else {
+				sec--;
 				this.setState({
-					sec: this.state.sec - 1,
-				})
+					sec: sec,
+				});
 			}
-        }, 1000);
+		}, 1000);
 	}
 
 	render() {
@@ -108,10 +75,10 @@ export default class RewardRedemptionScreen extends Component<Props> {
 			<Text style={styles.restaurant}> {this.state.restaurant} </Text>
 			<Text style={styles.title}> {this.state.rewardTitle} </Text>
 			</View>
-			{this.state.show ? 
-				(<Text style={styles.countdown}>{this.state.min}:{("0" + this.state.sec).slice(-2)}</Text>) :
+			{this.state.min != null ? 
+				(<Text style={styles.countdown}>{this.state.min}:{('0' + this.state.sec).slice(-2)}</Text>) :
 				 <Text style={styles.message}>By redeeming this reward, {this.state.itemLoyaltyPointCost} loyalty points will be deducted from your current balance.</Text>}
-			<TouchableOpacity style={[styles.signupBtn,{backgroundColor:this.state.show ? 'gray' : primaryColor}]} title='Redeem' disabled={this.state.show}
+			<TouchableOpacity style={[styles.signupBtn,{backgroundColor:this.state.min != null ? 'gray' : primaryColor}]} title='Redeem' disabled={this.state.min != null}
 			onPress={()=>{Alert.alert(
 				"Are you sure?",
 				"You have two minutes to redeem the item",
