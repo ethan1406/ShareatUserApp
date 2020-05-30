@@ -11,7 +11,6 @@ import {primaryColor, secondaryColor, darkGray} from './Colors';
 import {headerFontSize} from './Dimensions';
 
 
-
 type Props = {};
 export default class RecentOrderScreen extends Component<Props> {
 
@@ -61,9 +60,6 @@ export default class RecentOrderScreen extends Component<Props> {
         contentContainerStyle={{flex:1, justifyContent: 'flex-start', alignItems: 'flex-start', flexDirection: 'column'}}
         resizeMode='contain'>
         <Text style={styles.placeholderText}> </Text>
-        <View style={[styles.headerContainer]} color='#000000'>
-            <Text style={[styles.btnText]}>Recent Orders</Text>
-        </View>
         {this.state.recentOrders.map((order, index) => {
            const date = new Date(order.time);
            var hours = date.getHours();
@@ -72,18 +68,20 @@ export default class RecentOrderScreen extends Component<Props> {
               hours -= 12;
            }
            return (
-            <TouchableOpacity style={styles.rewardContainer} key={index} 
+            <View style={styles.rewardContainer}>
+            <TouchableOpacity key={index} style={{flexDirection:'row'}}
               onPress={()=> this._lookupReceipt(order)}>
+              <Image style={styles.restaurantIcon} source={require('./img/splash_logo.png')}/>
+              <View>
               <Text style={{marginBottom: 3}}>{order.restaurantName} </Text>
               <Text style={{color: 'gray', marginBottom: 3}}>{order.address}</Text>
-              <Text style={{color: 'gray', marginBottom: 3}}>{
+              <Text style={{color: 'gray', marginBottom: 15}}>{
                 date.getMonth()+1}/{date.getDate()}/{date.getFullYear()} at {hours}:{date.getMinutes()} {pmAm}
               </Text>
-              {order.chargeIds.map(chargeId => 
-                (<Text style={{color: 'gray', marginBottom: 3}} key={chargeId}> 
-                    {`Order# ${chargeId.substr(chargeId.length - 5)}`}
-                  </Text>))}
+              </View>
             </TouchableOpacity>
+            {index == this.state.recentOrders.length - 1 ? null : <View style={styles.separator}/>}
+            </View>
             ); 
           })
         }
@@ -96,23 +94,27 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: 'white',
   },
-  headerContainer: {
-    width: '100%',
-    height: 35,
-    backgroundColor: '#F3A545',
-    borderRadius: 2,
-    justifyContent: 'space-between',
-    flexDirection: 'row'
-  },
   rewardContainer: {
-    marginTop: 15,
-    marginBottom: 20,
-    marginLeft: 15
+    alignSelf: 'center',
+    marginTop: 5,
+    marginBottom: 10,
+    width:'90%',
   },
   btnText: {
     color:'white',
     textAlign:'left',
     marginLeft: 15,
     paddingTop: 10
+  },
+  restaurantIcon: {
+    marginTop: 7,
+    height: 50,
+    width: 50,
+    marginRight: 15,
+    borderRadius: 10,
+  },
+  separator: {
+    borderBottomWidth: 0.5,
+    borderColor: 'gray',
   }
 });

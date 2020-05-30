@@ -37,13 +37,13 @@ export default class RewardRedemptionScreen extends Component<Props> {
 		};
 	}
 
-	async componentDidMount() {
+	componentDidMount() {
 		if (min != 2 && sec != 0) {
 			this._countdown();
 		}
 	}
 
-	async _countdown() {
+	_countdown() {
 		this.setState({
 			min: min,
 			sec: sec,
