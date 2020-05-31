@@ -13,7 +13,6 @@ import { pusherId } from './Constants';
 
 type Props = {};
 const colors = [turquoise, blue, pink, green, red, purple, lightPink];
-const screenHeight = Dimensions.get('window').height;
 const screenWidth= Dimensions.get('window').width;
 
 export default class CheckSplitScreen extends Component<Props> {
@@ -167,7 +166,7 @@ export default class CheckSplitScreen extends Component<Props> {
   segueWayToConfirmation() {
 
     // if all other members have paid, the last person pays the remainder
-    var shouldPayRemainder = this.state.members.length > 1 
+    const shouldPayRemainder = this.state.members.length > 1 
         && (this.state.members.filter(member => member.hasPaid == false)).length == 1 ;
 
   
@@ -182,7 +181,8 @@ export default class CheckSplitScreen extends Component<Props> {
           partyId: this.state.partyId,
           colorMap: this.state.colorMap,
           userInfo: this.state.userInfo,
-          shouldPayRemainder: shouldPayRemainder
+          shouldPayRemainder: shouldPayRemainder,
+          members: this.state.members
         });
   }
 
@@ -196,7 +196,7 @@ export default class CheckSplitScreen extends Component<Props> {
   render() {
 
     const { isGroupCheck, hasPaid, selectedIndex} = this.state;
-    let instructionMessage = <View />;
+    let instructionMessage = '';
     let totalTitle = selectedIndex ? 'Your Total: ' : 'Group Total: ';
 
     if (!isGroupCheck) {
@@ -204,10 +204,12 @@ export default class CheckSplitScreen extends Component<Props> {
     }
 
     if (hasPaid) {
-      instructionMessage = <Text style={{color: 'gray'}}>You have already completed your payment.</Text>;
+      instructionMessage = 'You have already completed your payment.';
     } else if (isGroupCheck) {
-      instructionMessage = <Text style={{color: 'gray'}}>Double Tap the Dishes You've Shared!</Text>;
-    } 
+      instructionMessage = 'Double Tap the Dishes You\'ve Shared!';
+    } else {
+      instructionMessage = 'If this is a group order, your friends can scan the code and split the check with you.';
+    }
 
     return (
       <View style={styles.container} resizeMode='contain'>
@@ -231,7 +233,7 @@ export default class CheckSplitScreen extends Component<Props> {
               /> 
             </Animated.View> : <View /> }
             <FlatList
-              style={{marginHorizontal: 20, backgroundColor: 'white', marginTop: 20}}
+              style={{backgroundColor: 'white', marginTop: 20}}
               data={this.state.selectedIndex ? 
                 this.state.data.filter(order => order.buyers.map(buyer => buyer.amazonUserSub).includes(this.state.userInfo.amazonUserSub)) : 
                 this.state.data}
@@ -242,11 +244,11 @@ export default class CheckSplitScreen extends Component<Props> {
               ListHeaderComponent={this._renderHeader}
             />
           <View style={styles.orderTotalContainer}>
-            <Text style={{color: 'gray'}}>{totalTitle}</Text>
-            <Text> {this.state.selectedIndex ? `$${this._getindividualTotal()}`: `$${(this.state.totals.sub_total/100).toFixed(2)}`} </Text>
+            <Text style={{color: darkGray}}>{totalTitle}</Text>
+            <Text> {this.state.selectedIndex ? `$${this._getindividualTotal()}`: `$${((this.state.data.reduce( (acc, order) => acc + order.price, 0))/100).toFixed(2)}`} </Text>
           </View>
         </View>
-        {instructionMessage}
+        <Text style={{color: darkGray, width: '80%', textAlign:'center'}}>{instructionMessage}</Text>
         <TouchableOpacity style={[styles.confirmBtn, {backgroundColor: this.state.hasPaid ? darkGray : primaryColor}]} 
           disabled={this.state.hasPaid} onPress={this.segueWayToConfirmation} color='#000000'>
             <Text style={styles.btnText}>Check out</Text>
@@ -298,7 +300,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginTop: 20,
     marginBottom: 15,
-    marginLeft: 20,
     color: darkGray
   },
   confirmBtn: {

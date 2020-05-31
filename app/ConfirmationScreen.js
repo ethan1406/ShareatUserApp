@@ -4,13 +4,14 @@
 import React, {Component} from 'react';
 import {StyleSheet, Text, View, TouchableOpacity, 
   FlatList, Image, Dimensions} from 'react-native';
+import { Tooltip } from 'react-native-elements';
 import SegmentedControlTab from 'react-native-segmented-control-tab';
 import axios from 'axios';
 import Dialog from 'react-native-dialog';
 import {baseURL} from './Constants';
 import Card from './models/Card';
 import OrderListItem from './components/OrderListItem';
-import {primaryColor, secondaryColor, darkGray} from './Colors';
+import {primaryColor, secondaryColor, darkGray, turquoise} from './Colors';
 import {headerFontSize} from './Dimensions';
 
 
@@ -31,16 +32,17 @@ export default class ConfirmationScreen extends Component<Props> {
 
     var sub_total = params.isGroupCheck ? 
       myOrders.reduce((total, order) => ( total + order.price/order.buyers.length), 0)
-      : params.totals.sub_total;
+      : params.totals.sub_total + params.totals.other_charges + params.totals.service_charges - params.totals.discounts;
 
     var tax = params.isGroupCheck ? 
-      (sub_total/params.totals.sub_total) * params.totals.tax
+      Math.floor((sub_total/params.totals.sub_total) * params.totals.tax)
       : params.totals.tax;
 
-    var tip = sub_total * defaultTipRate;
+    var tip = Math.floor(sub_total * defaultTipRate);
+
     var total = params.isGroupCheck ?
       parseInt(sub_total + tax + tip, 10)
-      : params.totals.total;
+      : params.totals.total + tip;
 
 
     this.state = {
@@ -89,6 +91,19 @@ export default class ConfirmationScreen extends Component<Props> {
 
   async componentDidMount() {
     this._fetchCards();
+    if (this.props.navigation.state.params.shouldPayRemainder) {
+      try {
+         const {data} = await axios.post(baseURL + '/party/remainder', 
+                              {ticketId: this.state.ticketId,
+                               restaurantOmnivoreId: this.state.restaurantOmnivoreId,
+                            });
+         const remainingBalance = data.due - this.state.total;
+         this.setState({remainingBalance});
+
+      } catch (err) {
+        console.log(err);
+      }
+    }
   }
 
   willFocus = this.props.navigation.addListener(
@@ -171,8 +186,8 @@ export default class ConfirmationScreen extends Component<Props> {
         dialogVisible: true});
       return;
     }
-    var tip = (this.state.sub_total) * tipRate;
-    var total = parseInt(tip + this.state.sub_total + this.state.tax, 10);
+    var tip = Math.floor((this.state.sub_total) * tipRate);
+    var total = parseInt(tip + this.state.sub_total + this.state.tax + this.state.remainingBalance, 10);
     
     this.setState({
       ...this.state,
@@ -230,12 +245,22 @@ export default class ConfirmationScreen extends Component<Props> {
       });
     } catch (err) {
       console.log(err);
+      if (err.response.status == 503) {
+        // agent offline, ask waiter
+      } else if (err.response.status == 400) {
+       // card has been charged, ask waiter
+      } else if (err.response.status == 500) {
+        // please try again
+      }
     }
     
   }
 
 
   render() {
+    
+    const {shouldPayRemainder} = this.props.navigation.state.params;
+
     return (
       <View style={styles.container} resizeMode='contain'>
       <View style={{flex: 1, justifyContent: 'flex-start', flexDirection: 'column', height:screenHeight, width:screenWidth}}>
@@ -280,10 +305,20 @@ export default class ConfirmationScreen extends Component<Props> {
                 <Text style={{marginLeft: 15}}>Tip </Text>
                 <Text style={{marginRight: 15}}>{`$${(this.state.tip/100).toFixed(2)}`}</Text>
               </View>
-              <View style={styles.feeContainer}>
-                <Text style={{marginLeft: 15}}>Remaining Table Balance </Text>
-                <Text style={{marginRight: 15}}>{`$${(this.state.tip/100).toFixed(2)}`}</Text>
-              </View>
+              {shouldPayRemainder ?
+                <View style={[styles.feeContainer, {marginLeft: 15}]}>
+                  <Tooltip backgroundColor={turquoise} containerStyle={{width:'70%'}} height={180}
+                    popover={<Text>When dishes are split, we round down the number for everyone. This leads to 
+                      a small difference between the dish and what is paid. Our algorithm requires the last person
+                      to cover these small accumulated differences. </Text>}>
+                      <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                        <Text>Remaining differences</Text>
+                        <Image style={{height: 20, width: 20, marginLeft: 5, tintColor: primaryColor}} source={require('./img/ic_moreInfo.png')} />
+                      </View>
+                  </Tooltip>
+                  <Text style={{marginRight: 30}}>{`$${(this.state.remainingBalance/100).toFixed(2)}`}</Text>
+                </View> : null
+              }
               <View style={[styles.feeContainer, {justifyContent: 'center'}]}>
                 <SegmentedControlTab
                   values={['12%', '15%', '18%', 'Custom']}
