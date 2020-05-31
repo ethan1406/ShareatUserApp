@@ -2,12 +2,13 @@
 'use strict';
 
 import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View, TouchableOpacity, Image, ScrollView} from 'react-native';
+import {StyleSheet, Text, View, TouchableOpacity, Image, ScrollView} from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-community/async-storage';
-import {HeaderBackButton} from 'react-navigation';
 import {baseURL} from './Constants';
 import {primaryColor, secondaryColor, darkGray} from './Colors';
+import { Storage } from 'aws-amplify';
+import RecentOrder from './models/RecentOrder';
 import {headerFontSize} from './Dimensions';
 
 
@@ -17,15 +18,31 @@ export default class RecentOrderScreen extends Component<Props> {
   constructor(props) {
     super(props);
     this.state = {
-      recentOrders: []
+      recentOrders: [RecentOrder]
     };
   }
 
   async componentDidMount() {
     try {
       const amazonUserSub = await AsyncStorage.getItem('amazonUserSub');
-      const response = await axios.get(`${baseURL}/user/${amazonUserSub}/receipts`);
-      this.setState({recentOrders: response.data});
+      const {data} = await axios.get(`${baseURL}/user/${amazonUserSub}/receipts`);
+
+      let promises = await data.map( async (reward) => {
+            var recentOrder = new RecentOrder(reward.time, reward.restaurantName, 
+              reward.address);
+            try{
+              const imageUrl = await Storage.get(`restaurants/${reward.restaurantName}/cover.jpg`);
+              recentOrder.setImageUrl(imageUrl);
+            } catch(err) {
+              console.log(err);
+            }
+            return recentOrder;
+        });
+
+      Promise.all(promises).then((recentOrders) =>{
+          this.setState({recentOrders});
+      });
+
     } catch (err) {
       console.log(err);
     }
@@ -61,7 +78,7 @@ export default class RecentOrderScreen extends Component<Props> {
         resizeMode='contain'>
         <Text style={styles.placeholderText}> </Text>
         {this.state.recentOrders.map((order, index) => {
-           const date = new Date(order.time);
+           const date = new Date(order.timeOfOrder);
            var hours = date.getHours();
            const pmAm = hours < 12 ? 'am' : 'pm';
            if(hours > 12) {
@@ -69,18 +86,18 @@ export default class RecentOrderScreen extends Component<Props> {
            }
            return (
             <View style={styles.rewardContainer}>
-            <TouchableOpacity key={index} style={{flexDirection:'row'}}
-              onPress={()=> this._lookupReceipt(order)}>
-              <Image style={styles.restaurantIcon} source={require('./img/splash_logo.png')}/>
-              <View>
-              <Text style={{marginBottom: 3}}>{order.restaurantName} </Text>
-              <Text style={{color: 'gray', marginBottom: 3}}>{order.address}</Text>
-              <Text style={{color: 'gray', marginBottom: 15}}>{
-                date.getMonth()+1}/{date.getDate()}/{date.getFullYear()} at {hours}:{date.getMinutes()} {pmAm}
-              </Text>
-              </View>
-            </TouchableOpacity>
-            {index == this.state.recentOrders.length - 1 ? null : <View style={styles.separator}/>}
+              <TouchableOpacity key={index} style={{flexDirection:'row'}}
+                onPress={()=> this._lookupReceipt(order)}>
+                <Image style={styles.restaurantIcon} source={{uri: order.imageUrl}}/>
+                <View>
+                <Text style={{marginBottom: 3}}>{order.restaurantName} </Text>
+                <Text style={{color: 'gray', marginBottom: 3}}>{order.address}</Text>
+                <Text style={{color: 'gray', marginBottom: 15}}>{
+                  date.getMonth()+1}/{date.getDate()}/{date.getFullYear()} at {hours}:{date.getMinutes()} {pmAm}
+                </Text>
+                </View>
+              </TouchableOpacity>
+              {index == this.state.recentOrders.length - 1 ? null : <View style={styles.separator}/>}
             </View>
             ); 
           })
