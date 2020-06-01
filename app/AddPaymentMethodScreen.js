@@ -2,10 +2,9 @@
 'use strict';
 
 import React, {Component} from 'react';
-import {Text, View, TouchableOpacity, Image, StyleSheet} from 'react-native';
+import {Text, View, TouchableOpacity, Image, StyleSheet, SafeAreaView} from 'react-native';
 import {baseURL} from './Constants.js';
 import axios from 'axios';
-import SafeAreaView from 'react-native-safe-area-view';
 import { CreditCardInput } from 'react-native-credit-card-input';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
 import AsyncStorage from '@react-native-community/async-storage';

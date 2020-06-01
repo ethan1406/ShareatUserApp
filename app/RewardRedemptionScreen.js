@@ -3,7 +3,7 @@ import React, {Component} from 'react';
 import {StyleSheet, View, Text, Alert, TouchableOpacity, Image}from 'react-native';
 import {primaryColor, secondaryColor, darkGray} from './Colors';
 import {headerFontSize} from './Dimensions';
-import BackgroundTimer from 'react-native-background-timer';
+//import BackgroundTimer from 'react-native-background-timer';
 
 type Props = {};
 var min = 2;

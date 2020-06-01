@@ -26,6 +26,7 @@ import {headerFontSize} from './Dimensions';
 
       this._signout = this._signout.bind(this);
       this._signoutRequest = this._signoutRequest.bind(this);
+      this.navigateToInformationScreen = this.navigateToInformationScreen.bind(this);
     }
 
     async componentDidMount() {
@@ -71,6 +72,11 @@ import {headerFontSize} from './Dimensions';
     Analytics.record({ name: 'albumVisit' });
   }
 
+  navigateToInformationScreen = (url) => {
+    this.props.navigation.navigate('Information', {url});
+  }
+
+
   static navigationOptions = ({navigation}) => {
     return{
       headerStyle: {
@@ -105,15 +111,15 @@ import {headerFontSize} from './Dimensions';
           <Image style={[styles.optionImage, {height: 20}]} source={require('./img/stripe/card_expiry.png')} />
           <Text style={styles.optionText}> Payment Methods</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.optionContainer} onPress={()=> {this._testAnalytics();}} color='#000000'>
+        <TouchableOpacity style={styles.optionContainer} onPress={()=> {this.navigateToInformationScreen('contact-us');}} color='#000000'>
           <Image style={[styles.optionImage, {height: 28}]} source={require('./img/about.png')} />
-          <Text style={styles.optionText}> About </Text>
+          <Text style={styles.optionText}> Contact Us </Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.optionContainer} onPress={()=> {this._testAnalytics();}} color='#000000'>
+        <TouchableOpacity style={styles.optionContainer} onPress={() => this.navigateToInformationScreen('private-policy')} color='#000000'>
           <Image style={[styles.optionImage, {height: 28}]} source={require('./img/ic_privacy.png')} />
-          <Text style={styles.optionText}> Privacy </Text>
+          <Text style={styles.optionText}> Privacy Policy</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.optionContainer} onPress={()=> {this._testAnalytics();}} color='#000000'>
+        <TouchableOpacity style={styles.optionContainer} onPress={() => this.navigateToInformationScreen('terms-of-use')} color='#000000'>
           <Image style={[styles.optionImage, {height: 28}]} source={require('./img/ic_terms_of_us.png')} />
           <Text style={styles.optionText}> Terms of Use </Text>
         </TouchableOpacity>

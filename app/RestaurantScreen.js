@@ -74,7 +74,7 @@ export default class RestaurantScreen extends Component<Props> {
           <ScrollView contentContainerStyle={styles.pointsContainer} bounces={false}>
             {this.state.merchant.rewards.map((reward, index) =>  { return (reward.pointsRequired > 0) ? (
               <View style={styles.rewardContainer} key={index}>
-              <TouchableOpacity     onPress={()=>{this.props.navigation.navigate('Redeem');}}>
+              <TouchableOpacity onPress={()=>{this.props.navigation.navigate('Redeem');}}>
               <Text>{reward.reward} </Text>
               <Text style={{color:'gray', marginTop: 3, marginBottom: 10}}> 
                 {this.state.pointAccumulated} / {reward.pointsRequired} pts

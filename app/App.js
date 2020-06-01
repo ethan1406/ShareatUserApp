@@ -23,6 +23,7 @@ import PaymentMethodsScreen from './PaymentMethodsScreen';
 import EditProfileScreen from './EditProfileScreen';
 import ForgotPasswordScreen from './ForgotPasswordScreen';
 import RewardRedemptionScreen from './RewardRedemptionScreen';
+import InformationScreen from './InformationScreen';
 import {primaryColor, darkGray} from './Colors';
 
 
@@ -158,6 +159,7 @@ const AppNavigator = createSwitchNavigator(
       path: 'main'
     },
     AddPaymentMethod: AddPaymentMethodScreen,
+    Information: InformationScreen
   },
   {
     mode: 'modal',
