@@ -3,7 +3,7 @@ import React, {Component} from 'react';
 import {StyleSheet, View, Text, Alert, TouchableOpacity, Image}from 'react-native';
 import {primaryColor, secondaryColor, darkGray} from './Colors';
 import {headerFontSize} from './Dimensions';
-//import BackgroundTimer from 'react-native-background-timer';
+import BackgroundTimer from 'react-native-background-timer';
 
 type Props = {};
 var min = 2;
@@ -11,20 +11,17 @@ var sec = 0;
 export default class RewardRedemptionScreen extends Component<Props> {
     constructor(props) {
         super(props);
-        this.state = {
-            restaurant: 'Dodge Dealership',
-            rewardTitle: 'One Free Hellcat',
-            itemLoyaltyPointCost: 62000,
-        };
+
+        this.state = {};
     }
 
     static navigationOptions = ({navigation}) => {
         return {
-            headerLeft:( 
-                <TouchableOpacity onPress={() => navigation.goBack(null)}>
+            headerLeft: () => ( 
+            <TouchableOpacity onPress={() => navigation.goBack(null)}>
                 <Image style={{height: 30, width: 30, marginLeft: 20, tintColor: primaryColor}} source={require('./img/backbtn.png')} />
-                </TouchableOpacity>
-                ),
+            </TouchableOpacity>
+            ),
             title: 'Redeem',
             headerStyle: {
                 backgroundColor: secondaryColor,
@@ -69,19 +66,22 @@ export default class RewardRedemptionScreen extends Component<Props> {
     }
 
     render() {
+
+        const { pointsRequired, restaurantName, rewardTitle} = this.props.navigation.state.params;
+
         return (
             <View style={styles.container}>
                 <View style={styles.info}>
-                    <Text style={styles.restaurant}> {this.state.restaurant} </Text>
-                    <Text style={styles.title}> {this.state.rewardTitle} </Text>
+                    <Text style={styles.restaurant}> {restaurantName} </Text>
+                    <Text style={styles.title}> {rewardTitle} </Text>
                 </View>
                 {this.state.min != null ? 
                     (<Text style={styles.countdown}>{this.state.min}:{('0' + this.state.sec).slice(-2)}</Text>) :
-                     <Text style={styles.message}>By redeeming this reward, {this.state.itemLoyaltyPointCost} loyalty points will be deducted from your current balance.</Text>}
+                     <Text style={styles.message}>By redeeming this reward, {pointsRequired} loyalty points will be deducted from your current balance. Please show your screen to the server once you hit redeem.</Text>}
                 <TouchableOpacity style={[styles.signupBtn,{backgroundColor:this.state.min != null ? 'gray' : primaryColor}]} title='Redeem' disabled={this.state.min != null}
                     onPress={()=>{Alert.alert(
                         'Are you sure?',
-                        'You have two minutes to redeem the item',
+                        'You have two minutes to show it to a server and redeem this item.',
                         [
                         {
                             text: 'Cancel',
@@ -131,8 +131,9 @@ const styles = StyleSheet.create({
         borderRadius: 140,
     },
     message:{
-        width: '70%',
+        width: '80%',
         fontSize: 15,
+        lineHeight: 20,
         color: darkGray,
     },
     signupBtn: {

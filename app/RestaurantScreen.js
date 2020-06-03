@@ -21,6 +21,8 @@ export default class RestaurantScreen extends Component<Props> {
       pointAccumulated: 0,
       errorMessage: null
     };
+
+    this.navigateToRedeemScreen = this.navigateToRedeemScreen.bind(this);
   }
 
   static navigationOptions = ({navigation}) => {
@@ -58,6 +60,16 @@ export default class RestaurantScreen extends Component<Props> {
     }
   }
 
+  navigateToRedeemScreen = (pointsRequired, rewardTitle) => {
+    console.log(this.props.navigation.state.params.restaurantName);
+    console.log(rewardTitle);
+    this.props.navigation.navigate('Redeem', 
+      { pointsRequired, 
+        restaurantName: this.props.navigation.state.params.restaurantName,
+        rewardTitle
+      });
+  }
+
 
   render() {
     return (
@@ -74,20 +86,20 @@ export default class RestaurantScreen extends Component<Props> {
           <ScrollView contentContainerStyle={styles.pointsContainer} bounces={false}>
             {this.state.merchant.rewards.map((reward, index) =>  { return (reward.pointsRequired > 0) ? (
               <View style={styles.rewardContainer} key={index}>
-              <TouchableOpacity onPress={()=>{this.props.navigation.navigate('Redeem');}}>
-              <Text>{reward.reward} </Text>
-              <Text style={{color:'gray', marginTop: 3, marginBottom: 10}}> 
-                {this.state.pointAccumulated} / {reward.pointsRequired} pts
-              </Text>
-              <Progress.Circle showsText={true} aimated={false}
-                progress={this.state.pointAccumulated/reward.pointsRequired} size={90} color={primaryColor}/>
-              <Text style={{color:'gray', marginTop: 10}}> 
-                {(reward.pointsRequired > this.state.pointAccumulated) ?
-                  `${reward.pointsRequired - this.state.pointAccumulated} pts left`
-                  : 'redeem'
-                }
-              </Text>
-              </TouchableOpacity>
+                <TouchableOpacity onPress={()=>this.navigateToRedeemScreen(reward.pointsRequired, reward.reward)} disabled={reward.pointsRequired > this.state.pointAccumulated} >
+                  <Text>{reward.reward} </Text>
+                  <Text style={{color:'gray', marginTop: 3, marginBottom: 10}}> 
+                    {this.state.pointAccumulated} / {reward.pointsRequired} pts
+                  </Text>
+                  <Progress.Circle showsText={true} aimated={false}
+                    progress={this.state.pointAccumulated/reward.pointsRequired} size={90} color={primaryColor}/>
+                  <Text style={{color:'gray', marginTop: 10}}> 
+                    {(reward.pointsRequired > this.state.pointAccumulated) ?
+                      `${reward.pointsRequired - this.state.pointAccumulated} pts left`
+                      : 'redeem now'
+                    }
+                  </Text>
+                </TouchableOpacity>
               </View>
               ) : null; })}
           </ScrollView>
