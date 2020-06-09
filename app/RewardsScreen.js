@@ -3,7 +3,7 @@
 
 import React, {Component} from 'react';
 import {StyleSheet, Text, View, TouchableOpacity, 
-  Image, ScrollView, StatusBar, Button} from 'react-native';
+  Image, ScrollView, StatusBar} from 'react-native';
 import axios from 'axios';
 import {baseURL} from './Constants';
 import { Storage } from 'aws-amplify';
@@ -30,11 +30,11 @@ import {headerFontSize} from './Dimensions';
     async componentDidMount() {
       try {
         const amazonUserSub = await AsyncStorage.getItem('amazonUserSub');
-        const response = await axios.get(baseURL + `/user/${amazonUserSub}/loyaltyPoints`);
+        const {data} = await axios.get(baseURL + `/user/${amazonUserSub}/loyaltyPoints`);
 
-        let promises = await response.data.map( async (reward) => {
+        let promises = await data.map( async (reward) => {
             var restaurant = new Restaurant(reward.restaurantAmazonUserSub, reward.restaurantName, 
-              reward.address, reward.description);
+              reward.address, reward.description, reward.points, reward.immediateRewards, reward.redemptions);
             try{
               const imageUrl = await Storage.get(`restaurants/${reward.restaurantName}/cover.jpg`);
               restaurant.setImageUrl(imageUrl);
@@ -44,7 +44,7 @@ import {headerFontSize} from './Dimensions';
             return restaurant;
         });
 
-        this.setState({loyaltyPoints: response.data, isLoaded: true});
+        this.setState({loyaltyPoints: data, isLoaded: true});
 
         Promise.all(promises).then((restaurants) =>{
           this.setState({restaurants});
@@ -70,14 +70,20 @@ import {headerFontSize} from './Dimensions';
     }
 
     _lookupRestaurant = (restaurantAmazonUserSub, restaurantName) => {
+
+      const restaurant = this.state.restaurants.find(restaurant => restaurant.restaurantAmazonUserSub === restaurantAmazonUserSub);
+    
+
       this.props.navigation.navigate('Restaurant', {
-        restaurantName, restaurantAmazonUserSub
+        restaurantName, restaurantAmazonUserSub, restaurant
       });
     }
     render() {
       const {loyaltyPoints} = this.state;
 
       var userRewardsView = null;
+      var userLoyaltyProgramView = null;
+      var userImmediateRewardsView = null;
 
       if (this.state.isLoaded) {
         if (loyaltyPoints.length == 0) {
@@ -87,10 +93,12 @@ import {headerFontSize} from './Dimensions';
               <Text style={styles.noRewardsText}> Start collecting rewards at Shareat partnered restaurants.</Text>
           </View>;
         } else {
-          userRewardsView = 
-            <ScrollView >
-              <Text style={styles.wallet}> Wallet </Text>
-              {this.state.restaurants.map((restaurant, index) => (
+          userLoyaltyProgramView = 
+            <View>
+              <Text style={styles.wallet}> Loyalty Programs </Text>
+              {this.state.restaurants.map((restaurant, index) => 
+                restaurant.points === 0 ? null : 
+                (
                   <TouchableOpacity style={styles.rewardContainer} key={index} 
                     onPress={()=>{this._lookupRestaurant(restaurant.restaurantAmazonUserSub, restaurant.name);}}>
                     <Image style={styles.restaurantIcon}
@@ -104,24 +112,41 @@ import {headerFontSize} from './Dimensions';
                     </View>
                   </TouchableOpacity>
                   ))}
-              <View style={styles.checkIn}>
-                <Text style={styles.wallet}> Check-In </Text>
-              </View>
-              {this.state.restaurants.map((restaurant, index) => (
-                <TouchableOpacity style={styles.rewardContainer} key={index} 
-                  onPress={()=>{this._lookupRestaurant(restaurant.restaurantAmazonUserSub, restaurant.name);}}>
-                  <Image style={styles.restaurantIcon}
-                        source={{uri: restaurant.imageUrl}}/>
-                    <View style={{flexDirection: 'column', flex: 1}}>
-                    <View style={styles.restaurantInfo}>
-                    <Text style={{color: '#A9A9A9', fontSize: 15, marginTop: 15, marginBottom: 3}}>{restaurant.name} </Text>
-                    <Text numberOfLines={2} style={{color: '#A9A9A9', fontSize: 12, marginBottom: 3}}>{restaurant.address} </Text>
-                    <Text style={{color: 'grey', fontSize: 16, marginBottom: 10}}>{restaurant.description} </Text>
-                    </View>
+              </View>;
+
+            if (this.state.restaurants.filter(restaurant => 
+              (restaurant.immediateRewards !== undefined && restaurant.immediateRewards.length !== 0))
+              .length !== 0) {
+              userImmediateRewardsView = 
+                <View>
+                  <View style={styles.checkIn}>
+                  <Text style={styles.wallet}> Check-In Rewards </Text>
                   </View>
-                </TouchableOpacity>
-                ))}
-            </ScrollView>;
+                  {this.state.restaurants.map((restaurant) => (
+                    restaurant.immediateRewards === undefined ? null :
+                      restaurant.immediateRewards.map((immediateReward, index) => (
+                        <TouchableOpacity style={styles.rewardContainer} key={index} 
+                          onPress={()=>{this._lookupRestaurant(restaurant.restaurantAmazonUserSub, restaurant.name);}}>
+                          <Image style={styles.restaurantIcon}
+                                source={{uri: restaurant.imageUrl}}/>
+                            <View style={{flexDirection: 'column', flex: 1}}>
+                            <View style={styles.restaurantInfo}>
+                            <Text style={{color: '#A9A9A9', fontSize: 15, marginTop: 15, marginBottom: 3}}>{restaurant.name} </Text>
+                            <Text numberOfLines={2} style={{color: '#A9A9A9', fontSize: 12, marginBottom: 3}}>{restaurant.address} </Text>
+                            <Text style={{color: 'grey', fontSize: 16, marginBottom: 10}}>{immediateReward.rewardName} </Text>
+                            </View>
+                          </View>
+                        </TouchableOpacity>
+                      ))
+                    ))}
+                </View>;
+            }
+
+            userRewardsView = 
+              <ScrollView >
+                {userLoyaltyProgramView}
+                {userImmediateRewardsView}
+              </ScrollView>;
         }
       }
 

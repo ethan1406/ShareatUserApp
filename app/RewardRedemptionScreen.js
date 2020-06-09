@@ -1,8 +1,10 @@
 'use strict';
 import React, {Component} from 'react';
-import {StyleSheet, View, Text, Alert, TouchableOpacity, Image}from 'react-native';
+import {StyleSheet, View, Text, Alert, TouchableOpacity, Image, SafeAreaView}from 'react-native';
 import {primaryColor, secondaryColor, darkGray} from './Colors';
 import {headerFontSize} from './Dimensions';
+import {baseURL} from './Constants';
+import axios from 'axios';
 import BackgroundTimer from 'react-native-background-timer';
 
 type Props = {};
@@ -12,7 +14,11 @@ export default class RewardRedemptionScreen extends Component<Props> {
     constructor(props) {
         super(props);
 
-        this.state = {};
+        this.state = {
+            isShowingCountDown: false
+        };
+
+        this.goBack = this.goBack.bind(this);
     }
 
     static navigationOptions = ({navigation}) => {
@@ -34,18 +40,12 @@ export default class RewardRedemptionScreen extends Component<Props> {
         };
     }
 
-    componentDidMount() {
-        if (min != 2 && sec != 0) {
-            this._countdown();
-        }
-    }
-
     _countdown() {
+        this._redeemRewardApiCall();
         this.setState({
             min: min,
             sec: sec,
         });
-        BackgroundTimer.stopBackgroundTimer();
         BackgroundTimer.runBackgroundTimer(() => { 
             if (this.state.sec == 0 && this.state.min != 0) {
                 min--;
@@ -65,19 +65,67 @@ export default class RewardRedemptionScreen extends Component<Props> {
         }, 1000);
     }
 
+    _redeemRewardApiCall = async () => {
+        try {
+            const { pointsRequired, rewardTitle, 
+                restaurantAmazonUserSub, amazonUserSub, rewardId} = this.props.navigation.state.params;
+
+
+             const { data } = await axios.post(baseURL + 
+                    `/user/${amazonUserSub}/deductPoints`,
+                    {
+                        points: pointsRequired,
+                        rewardName: rewardTitle,
+                        rewardId,
+                        restaurantAmazonUserSub
+                   });
+
+            this.props.navigation.state.params.rewardRedemptionHandler({
+                rewardTitle: rewardTitle,
+                rewardId: rewardId,
+                redemptionTime: data.redemptionTime,
+                redemptionPoints: pointsRequired
+            });
+        } catch (err) {
+            console.log(err);
+        }
+
+    }
+
+    goBack = () => {
+        BackgroundTimer.stopBackgroundTimer();
+        this.setState({min: null, sec: null});
+        this.props.navigation.goBack();
+    }
+    
+
     render() {
 
         const { pointsRequired, restaurantName, rewardTitle} = this.props.navigation.state.params;
 
         return (
-            <View style={styles.container}>
+            <SafeAreaView style={styles.container}>
+                <View style={styles.topBar}>
+                  <TouchableOpacity  onPress={this.goBack}>
+                      <Image style={{height: 30, width: 30, marginLeft: 10}} source={require('./img/cancelbtn.png')}/>
+                  </TouchableOpacity>
+                </View>
                 <View style={styles.info}>
                     <Text style={styles.restaurant}> {restaurantName} </Text>
                     <Text style={styles.title}> {rewardTitle} </Text>
                 </View>
                 {this.state.min != null ? 
-                    (<Text style={styles.countdown}>{this.state.min}:{('0' + this.state.sec).slice(-2)}</Text>) :
-                     <Text style={styles.message}>By redeeming this reward, {pointsRequired} loyalty points will be deducted from your current balance. Please show your screen to the server once you hit redeem.</Text>}
+                    (
+                    <View style={styles.countdownContainer}>
+                        <Text style={styles.countdownText}>
+                            {this.state.min}:{('0' + this.state.sec).slice(-2)}
+                         </Text>
+                    </View>
+                     ) :
+                     pointsRequired > 0 ? 
+                     <Text style={styles.message}>By redeeming this reward, {pointsRequired} loyalty points will be deducted from your current balance. Please show your screen to the server once you hit redeem.</Text>
+                        : <Text style={styles.message}>Please show your screen to the server once you hit redeem. </Text>
+                 }
                 <TouchableOpacity style={[styles.signupBtn,{backgroundColor:this.state.min != null ? 'gray' : primaryColor}]} title='Redeem' disabled={this.state.min != null}
                     onPress={()=>{Alert.alert(
                         'Are you sure?',
@@ -95,7 +143,7 @@ export default class RewardRedemptionScreen extends Component<Props> {
                         );}}>
                 <Text style={styles.btnText}>Redeem</Text>
                 </TouchableOpacity>
-            </View>
+            </SafeAreaView>
         );
     }
 }
@@ -103,6 +151,7 @@ export default class RewardRedemptionScreen extends Component<Props> {
 const styles = StyleSheet.create({
     container: {
         flex:1,
+        backgroundColor: 'white',
         alignItems: 'center', 
         flexDirection: 'column',
         justifyContent: 'space-between',
@@ -118,17 +167,27 @@ const styles = StyleSheet.create({
         paddingTop: 10,
         fontSize: 25,
     },
-    countdown: {
-        fontSize: 100,
-        color: 'white',
-        textAlign: 'center',
-        textAlignVertical: 'center',
+    topBar: {
+        flexDirection: 'row', 
+        width: '100%',
+        justifyContent: 'flex-start', 
+        alignItems: 'center', 
+        marginBottom: 20,
+    },
+    countdownContainer: {
         backgroundColor: primaryColor,
-        height: 280,
-        width: 280,
+        width: '70%',
+        aspectRatio: 1,
         borderWidth: 5,
         borderColor: 'yellow',
         borderRadius: 140,
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    countdownText: {
+        fontSize: 100,
+        color: 'white',
+        textAlign: 'center'
     },
     message:{
         width: '80%',

@@ -81,8 +81,7 @@ const OptionNavigator = createStackNavigator(
 const RewardNavigator = createStackNavigator(
 {
   Rewards: RewardsScreen,
-  Restaurant: RestaurantScreen,
-  Redeem: RewardRedemptionScreen
+  Restaurant: RestaurantScreen
 });
 
 
@@ -159,7 +158,8 @@ const AppNavigator = createSwitchNavigator(
       path: 'main'
     },
     AddPaymentMethod: AddPaymentMethodScreen,
-    Information: InformationScreen
+    Information: InformationScreen,
+    Redeem: RewardRedemptionScreen
   },
   {
     mode: 'modal',
