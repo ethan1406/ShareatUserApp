@@ -3,7 +3,7 @@
 
 import React, {Component} from 'react';
 import {StyleSheet, Text, View, TouchableOpacity, 
-  Image, ScrollView, StatusBar} from 'react-native';
+  Image, ScrollView, StatusBar, RefreshControl} from 'react-native';
 import axios from 'axios';
 import {baseURL} from './Constants';
 import { Storage } from 'aws-amplify';
@@ -23,11 +23,47 @@ import {headerFontSize} from './Dimensions';
         imageUrl: '',
         restaurants: [Restaurant],
         loyaltyPoints: [],
-        isLoaded: false
+        isLoaded: false,
+        refreshing: false,
       };
+
+      this.onRefresh = this.onRefresh.bind(this);
+      this.fetchRewards = this.fetchRewards.bind(this);
     }
 
     async componentDidMount() {
+      await this.fetchRewards();
+
+      this.willFocusSubscription = this.props.navigation.addListener(
+        'willFocus',
+        async payload => {
+          await this.fetchRewards();
+        }
+      );
+    }
+
+    componentWillUnmount() {
+      if (this.willFocusSubscription !== undefined) {
+        console.log('remvoing')
+        this.willFocusSubscription.remove();
+      }
+    }
+
+    static navigationOptions = ({navigation}) => {
+      return{
+        title: 'Rewards',
+        headerStyle: {
+          backgroundColor: secondaryColor,
+        },
+        headerTintColor: darkGray,
+        headerTitleStyle: {
+          fontSize: headerFontSize, 
+        },
+        headerTitleAlign: 'center'
+      };
+    }
+
+    fetchRewards = async () => {
       try {
         const amazonUserSub = await AsyncStorage.getItem('amazonUserSub');
         const {data} = await axios.get(baseURL + `/user/${amazonUserSub}/loyaltyPoints`);
@@ -47,7 +83,7 @@ import {headerFontSize} from './Dimensions';
         this.setState({loyaltyPoints: data, isLoaded: true});
 
         Promise.all(promises).then((restaurants) =>{
-          this.setState({restaurants});
+          this.setState({restaurants, refreshing: false});
         });
       } catch (err) {
         console.log(err);
@@ -55,29 +91,21 @@ import {headerFontSize} from './Dimensions';
       }
     }
 
-    static navigationOptions = ({navigation}) => {
-      return{
-        title: 'Rewards',
-        headerStyle: {
-          backgroundColor: secondaryColor,
-        },
-        headerTintColor: darkGray,
-        headerTitleStyle: {
-          fontSize: headerFontSize, 
-        },
-        headerTitleAlign: 'center'
-      };
+    onRefresh = async () => {
+      this.setState({refreshing: true});
+
+      await this.fetchRewards();
     }
 
     _lookupRestaurant = (restaurantAmazonUserSub, restaurantName) => {
 
       const restaurant = this.state.restaurants.find(restaurant => restaurant.restaurantAmazonUserSub === restaurantAmazonUserSub);
-    
 
       this.props.navigation.navigate('Restaurant', {
         restaurantName, restaurantAmazonUserSub, restaurant
       });
     }
+
     render() {
       const {loyaltyPoints} = this.state;
 
@@ -143,7 +171,9 @@ import {headerFontSize} from './Dimensions';
             }
 
             userRewardsView = 
-              <ScrollView >
+              <ScrollView refreshControl={
+                  <RefreshControl tintColor={primaryColor} colors={[primaryColor]} refreshing={this.state.refreshing} onRefresh={this.onRefresh} />
+                }>
                 {userLoyaltyProgramView}
                 {userImmediateRewardsView}
               </ScrollView>;

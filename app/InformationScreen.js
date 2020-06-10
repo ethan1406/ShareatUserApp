@@ -68,37 +68,37 @@ export default class InformationScreen extends Component<Props> {
         </View>
         <ScrollView>
           <Text style={styles.header}> {title} </Text>
-          {this.state.sections.map(section => (
-              <View>
+          {this.state.sections.map((section, topIndex) => (
+              <View key={topIndex} >
                 <Text style={styles.sectionHeader}>{section.header}</Text>
-                {section.paragraph.map(part => {
+                {section.paragraph.map((part, index) => {
                   if (part.type === 'bullet') {
                     if (part.content.indexOf('.') !== -1) {
                       return ( 
-                        <Text style={styles[part.type]}>
+                        <Text style={styles[part.type]} key={index} >
                           <Text style={{fontWeight: 'bold'}}>{part.content.substr(0, part.content.indexOf('.'))}</Text>
                           <Text>{part.content.substr(part.content.indexOf('.'))}</Text>
                         </Text>
                       );
                     }
                   }
-                  return <Text style={styles[part.type]}>{part.content}</Text>;
+                  return <Text style={styles[part.type]} key={index} >{part.content}</Text>;
                 })}
-                {section.sections === undefined ? null : section.sections.map(subSection => (
-                  <View>
+                {section.sections === undefined ? null : section.sections.map((subSection, topIndex) => (
+                  <View key={topIndex}>
                     <Text style={styles.subSectionHeader}>{subSection.header}</Text>
-                    {subSection.paragraph.map(part => {
+                    {subSection.paragraph.map((part, index) => {
                       if (part.type === 'bullet') {
                       if (part.content.indexOf('.') !== -1) {
                           return ( 
-                            <Text style={styles[part.type]}>
+                            <Text style={styles[part.type]} key={index}>
                               <Text style={{fontWeight: 'bold'}}>{part.content.substr(0, part.content.indexOf('.'))}</Text>
                               <Text>{part.content.substr(part.content.indexOf('.'))}</Text>
                             </Text>
                           );
                         }
                       }
-                      return <Text style={styles[part.type]}>{part.content}</Text>;
+                      return <Text style={styles[part.type]} key={index}>{part.content}</Text>;
                     })}
                   </View>
                 ))}

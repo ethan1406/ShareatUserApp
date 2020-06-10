@@ -2,7 +2,7 @@
 'use strict';
 
 import React, {Component} from 'react';
-import {StyleSheet, Text, View, TouchableOpacity, Image, ScrollView} from 'react-native';
+import {StyleSheet, Text, View, TouchableOpacity, Image, ScrollView, RefreshControl} from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-community/async-storage';
 import {baseURL} from './Constants';
@@ -18,34 +18,16 @@ export default class RecentOrderScreen extends Component<Props> {
   constructor(props) {
     super(props);
     this.state = {
-      recentOrders: [RecentOrder]
+      recentOrders: [RecentOrder],
+      refreshing: false
     };
+
+    this.onRefresh = this.onRefresh.bind(this);
+    this.fetchRecentOrders = this.fetchRecentOrders.bind(this);
   }
 
   async componentDidMount() {
-    try {
-      const amazonUserSub = await AsyncStorage.getItem('amazonUserSub');
-      const {data} = await axios.get(`${baseURL}/user/${amazonUserSub}/receipts`);
-
-      let promises = await data.map( async (reward) => {
-            var recentOrder = new RecentOrder(reward.time, reward.restaurantName, 
-              reward.address);
-            try{
-              const imageUrl = await Storage.get(`restaurants/${reward.restaurantName}/cover.jpg`);
-              recentOrder.setImageUrl(imageUrl);
-            } catch(err) {
-              console.log(err);
-            }
-            return recentOrder;
-        });
-
-      Promise.all(promises).then((recentOrders) =>{
-          this.setState({recentOrders});
-      });
-
-    } catch (err) {
-      console.log(err);
-    }
+    await this.fetchRecentOrders();
   }
 
     static navigationOptions = ({navigation}) => {
@@ -67,15 +49,49 @@ export default class RecentOrderScreen extends Component<Props> {
         };
     }
 
+
+
+  fetchRecentOrders = async () => {
+    try {
+      const amazonUserSub = await AsyncStorage.getItem('amazonUserSub');
+      const {data} = await axios.get(`${baseURL}/user/${amazonUserSub}/receipts`);
+
+      let promises = await data.map( async (reward) => {
+            var recentOrder = new RecentOrder(reward.time, reward.restaurantName, 
+              reward.address);
+            try{
+              const imageUrl = await Storage.get(`restaurants/${reward.restaurantName}/cover.jpg`);
+              recentOrder.setImageUrl(imageUrl);
+            } catch(err) {
+              console.log(err);
+            }
+            return recentOrder;
+        });
+
+      Promise.all(promises).then((recentOrders) =>{
+          this.setState({recentOrders, refreshing: false});
+      });
+
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  onRefresh = async () => {
+      this.setState({refreshing: true});
+
+      await this.fetchRecentOrders();
+    }
+
   _lookupReceipt = (order) => {
     this.props.navigation.navigate('Receipt', {order});
   }
 
   render() {
     return (
-      <ScrollView style={styles.container} 
-        contentContainerStyle={{flex:1, justifyContent: 'flex-start', alignItems: 'flex-start', flexDirection: 'column'}}
-        resizeMode='contain'>
+      <ScrollView style={styles.container} resizeMode='contain' refreshControl={
+          <RefreshControl tintColor={primaryColor} colors={[primaryColor]} refreshing={this.state.refreshing} onRefresh={this.onRefresh} />}
+          contentContainerStyle={{flex:1, justifyContent: 'flex-start', alignItems: 'flex-start', flexDirection: 'column'}}>
         <Text style={styles.placeholderText}> </Text>
         {this.state.recentOrders.map((order, index) => {
            const date = new Date(order.timeOfOrder);
@@ -85,7 +101,7 @@ export default class RecentOrderScreen extends Component<Props> {
               hours -= 12;
            }
            return (
-            <View style={styles.rewardContainer}>
+            <View style={styles.rewardContainer} key={index} >
               <TouchableOpacity key={index} style={{flexDirection:'row'}}
                 onPress={()=> this._lookupReceipt(order)}>
                 <Image style={styles.restaurantIcon} source={{uri: order.imageUrl}}/>
