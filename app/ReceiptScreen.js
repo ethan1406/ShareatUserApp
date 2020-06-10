@@ -28,11 +28,17 @@ export default class ReceiptScreen extends Component<Props> {
       errMessage: '',
       refreshing: false,
       colorMap: {},
+      restaurantName: 'Yummly\'s Kitchen',
+      address:'2451 S Figueroa St., Los Angeles, CA 90007',
       tip: params.order.tip,
       tax: params.order.tax,
+      rewardsRedeemed: 911,
       individualPrice: 0,
-      myOrders: []
-
+      payment: 'MASTERCARD 8798',
+      myOrders: [{id:1, quantity:1, name:'Boujee Bun', price: 9999},
+       {id:2, quantity: 1, name:'Kanyam West', price:42000},
+       {id:3, quantity: 1, name:'Uni Ribeye Prime Steak', price:1},
+       ]
     };
   }
 
@@ -67,7 +73,7 @@ export default class ReceiptScreen extends Component<Props> {
         return{
             headerLeft:(
               <TouchableOpacity onPress={() => navigation.goBack(null)}>
-                 <Image style={{height: 30, width: 30, marginLeft: 20, tintColor: primaryColor}} source={require('./img/backbtn.png')} />
+                 <Image style={{height: 30, width: 30, marginLeft: 20, tintColor: primaryColor}} source={require('./img/cancelbtn.png')} />
               </TouchableOpacity>
             ),
             title: 'Order Receipt',
@@ -85,11 +91,12 @@ export default class ReceiptScreen extends Component<Props> {
   _keyExtractor = (item) => item._id
 
   _renderItem = ({item}) => (
-    <View>
-      <View style={styles.cellContainer}>
-        <Text style={{color: 'black', width: '40%'}} numberOfLines={3}>{item.name}</Text>
-        <Text style={{color: 'black'}}>${(item.price/100).toFixed(2)}</Text>
+    <View style={styles.cellContainer}>
+      <View style={{flexDirection:'row'}}>
+        <Text style={[{fontWeight:'bold'}, styles.bigText]}>{item.quantity}    </Text>
+        <Text style={styles.bigText} numberOfLines={3}>{item.name}</Text>
       </View>
+      <Text style={[{marginLeft: 25, marginTop: 10},styles.smallText]}>${(item.price/100).toFixed(2)}</Text>
     </View>
   )
 
@@ -108,33 +115,47 @@ export default class ReceiptScreen extends Component<Props> {
     return (
       <View style={styles.container}>
         <ScrollView style={{height:screenHeight, width:screenWidth}}>
+          <View>
+          <Image style={styles.restaurantIcon} source={require('./img/splash_logo.png')}/>
+          <Text style={[{marginLeft: 25, marginTop: 20},styles.bigText]}>{this.state.restaurantName}</Text>
+          <Text style={[{marginLeft: 25, marginTop: 10},styles.smallText]}>{this.state.address}</Text>
+          </View>
+
           <View style={{marginTop: 20, backgroundColor: 'white'}}>
               <FlatList
-                style={{marginHorizontal: 15, backgroundColor: 'white'}}
+                style={{marginHorizontal: 25, backgroundColor: 'white'}}
                 data={this.state.myOrders}
                 extraData={this.state.refresh}
                 keyExtractor={this._keyExtractor}
                 renderItem={this._renderItem}
-                ListHeaderComponent={this._renderHeader}
+                //ListHeaderComponent={this._renderHeader}
               />
           </View>
-          <View style={styles.tipContainer}>         
+
+          <View style={styles.tipContainer}>
+                <Text style={[{marginLeft: 25},styles.bigText]}>Payment</Text>
+                <Text style={[{marginLeft: 25, marginTop: 5, marginBottom: 5},styles.smallText]}>{this.state.payment}</Text>
+                <View style={styles.lineSeparator} />         
                 <View style={[styles.feeContainer]}>
-                  <Text style={{marginLeft: 15}}>Subtotal </Text>
-                  <Text style={{marginRight: 15}}>{`$${(this.state.individualPrice/100).toFixed(2)}`}</Text>
+                  <Text style={[{marginLeft: 25},styles.smallText]}>Subtotal </Text>
+                  <Text style={[{marginRight: 25},styles.smallText]}>{`$${(this.state.individualPrice/100).toFixed(2)}`}</Text>
                 </View>
                 <View style={styles.feeContainer}>
-                  <Text style={{marginLeft: 15}}>Tax & Fees </Text>
-                  <Text style={{marginRight: 15}}>{`$${(this.state.tax/100).toFixed(2)}`}</Text>
+                  <Text style={[{marginLeft: 25},styles.smallText]}>Tax & Fees </Text>
+                  <Text style={[{marginRight: 25},styles.smallText]}>{`$${(this.state.tax/100).toFixed(2)}`}</Text>
                 </View>
                 <View style={styles.feeContainer}>
-                  <Text style={{marginLeft: 15}}>Tip </Text>
-                  <Text style={{marginRight: 15}}>{`$${(this.state.tip/100).toFixed(2)}`}</Text>
+                  <Text style={[{marginLeft: 25},styles.smallText]}>Tip </Text>
+                  <Text style={[{marginRight: 25},styles.smallText]}>{`$${(this.state.tip/100).toFixed(2)}`}</Text>
+                </View>
+                <View style={styles.feeContainer}>
+                  <Text style={[{marginLeft: 25},styles.smallText]}>Rewards Redeemed </Text>
+                  <Text style={[{marginRight: 25},styles.smallText]}>-{`$${(this.state.rewardsRedeemed/100).toFixed(2)}`}</Text>
                 </View>
                 <View style={styles.lineSeparator} />
-                <View style={styles.feeContainer}>
-                  <Text style={{marginLeft: 15}}>Total </Text>
-                  <Text style={{marginRight: 15}}>
+                <View style={[styles.feeContainer,{marginTop: 3, marginBottom: 40}]}>
+                  <Text style={[{marginLeft: 25},styles.bigText]}>Total </Text>
+                  <Text style={[{marginRight: 25},styles.bigText]}>
                     {`$${((this.state.individualPrice + this.state.tip + this.state.tax)/100).toFixed(2)}`}
                   </Text>
                 </View>
@@ -155,14 +176,10 @@ const styles = StyleSheet.create({
     flexDirection: 'column'
   },
   cellContainer : {
-    marginTop: 5,
-    height: 50,
-    width: '100%',
+    marginTop: 15,
+    height: 65,
     borderBottomWidth: 1,
     borderColor: '#e0e0e0',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    flexDirection: 'row',
   },
   headerContainer: {
     flexDirection:'row',
@@ -183,11 +200,27 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between'
   },
   lineSeparator: {
-     width: '90%', 
+     width: '93%', 
      borderBottomColor: 'lightgray', 
      alignSelf: 'center',
-     borderBottomWidth: 2, 
+     borderBottomWidth: 1, 
      paddingHorizontal: 15,
      marginVertical: 15
-  }
+  },
+  smallText: {
+    color: darkGray,
+    fontSize: 14,
+  },
+  bigText: {
+    fontSize: 15,
+  },
+  restaurantIcon: {
+      marginTop: 20,
+      height: 80,
+      width: 80,
+      borderRadius: 10,
+      alignSelf: 'center',
+      borderColor: darkGray,
+      borderWidth: 1,
+  },
 });
