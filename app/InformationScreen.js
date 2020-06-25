@@ -5,6 +5,7 @@ import {StyleSheet, View, ScrollView, Text, Image, TouchableOpacity, SafeAreaVie
 import axios from 'axios';
 import {baseURL} from './Constants';
 import {primaryColor, secondaryColor, darkGray} from './Colors';
+import { Analytics } from 'aws-amplify';
 
 
 type Props = {};
@@ -38,6 +39,21 @@ export default class InformationScreen extends Component<Props> {
   }
 
   async componentDidMount() {
+    var pageType = '';
+    if (this.state.url === 'private-policy') {
+      pageType = 'privatePolicy';
+    } else if (this.state.url === 'terms-of-use') {
+      pageType = 'termsOfUse';
+    } else if (this.state.url === 'contact-us') {
+      pageType = 'contactUs';
+    }
+
+    Analytics.record({
+      name: 'pageView',
+      attributes: {
+        page: pageType
+      }
+    });
 
     try {
       const {data} = await axios.get(`${baseURL}/user/${this.state.url}`);

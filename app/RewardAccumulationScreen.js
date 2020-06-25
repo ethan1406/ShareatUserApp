@@ -10,6 +10,7 @@ import axios from 'axios';
 
 import {baseURL} from './Constants';
 import {primaryColor, darkGray} from './Colors';
+import { Analytics } from 'aws-amplify';
 
 
 type Props = {};
@@ -34,6 +35,11 @@ export default class RewardAccumulationScreen extends Component<Props> {
     if(this._confettiView) {
      this._confettiView.startConfetti();
     }
+
+    Analytics.record({
+      name: 'pageView',
+      attributes: {page: 'rewardAccumulation'}
+    });
     
     const { restaurantAmazonUserSub } = this.props.navigation.state.params;
 

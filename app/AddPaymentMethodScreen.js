@@ -8,6 +8,7 @@ import axios from 'axios';
 import { CreditCardInput } from 'react-native-credit-card-input';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
 import AsyncStorage from '@react-native-community/async-storage';
+import { Analytics } from 'aws-amplify';
 
 type Props = {};
 
@@ -21,6 +22,15 @@ export default class AddPaymentMethodScreen extends Component<Props> {
 
   _onChange = form => {
     this.setState({form});
+  }
+
+  async componentDidMount() {
+    Analytics.record({
+      name: 'pageView',
+      attributes: {page: 'addPaymentMethod'}
+    });
+
+    this._fetchCards();
   }
 
   _addCard = async () => {
@@ -47,14 +57,21 @@ export default class AddPaymentMethodScreen extends Component<Props> {
       try {
         const amazonUserSub = await AsyncStorage.getItem('amazonUserSub');
         const response = await axios.post(`${baseURL}/user/${amazonUserSub}/storeOmnivoreCard`, cardInfo);
-        if(response.status == 500) {
-          this.setState({errorMessage : 'Please try again'});
-        } else if (response.status == 200) {
+        if (response.status == 200) {
           this.props.navigation.goBack();
           this.props.navigation.state.params.addCard(response.data.card);
+
+          Analytics.record({
+            name: 'action',
+            attributes: {page: 'addPaymentMethod', actionType: 'addPaymentMethodSuccess'}
+          });
         }
       } catch(err) {
         this.setState({errorMessage : 'Please try again'});
+        Analytics.record({
+          name: 'action',
+          attributes: {page: 'addPaymentMethod', actionType: 'addPaymentMethodError'}
+        });
       }
     }
   }

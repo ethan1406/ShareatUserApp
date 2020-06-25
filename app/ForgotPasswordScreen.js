@@ -4,7 +4,7 @@ import React, {Component} from 'react';
 import {StyleSheet, Text, View, Image, TouchableOpacity, TextInput} from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
 import SafeAreaView from 'react-native-safe-area-view';
-import { Auth } from 'aws-amplify';
+import { Auth, Analytics } from 'aws-amplify';
 
 type Props = {};
 export default class ForgotPasswordScreen extends Component<Props> {
@@ -30,6 +30,15 @@ export default class ForgotPasswordScreen extends Component<Props> {
     };
   }
 
+  componentDidMount() {
+    Analytics.record({
+      name: 'pageView',
+      attributes: {
+        page: 'forgotPasswordPage'
+      }
+    });
+  }
+
   async _forgotPassowordRequest() {
     if(this.state.email.trim() === '') {
       this.setState({errorMessage: 'Please enter your email'});
@@ -39,6 +48,11 @@ export default class ForgotPasswordScreen extends Component<Props> {
     try {
       await Auth.forgotPassword(this.state.email.trim().toLowerCase());
       this.setState({isForgotSubmitPage: true, errorMessage: ''});
+
+      Analytics.record({
+        name: 'action',
+        attributes: {page: 'forgotPasswordPage', actionType: 'sendCode'}
+      });
     } catch(err) {
       console.log(err);
       this.setState({errorMessage: err.message});
@@ -59,6 +73,10 @@ export default class ForgotPasswordScreen extends Component<Props> {
     try {
       await Auth.forgotPasswordSubmit(this.state.email, this.state.confirmationCode, this.state.pwd);
       this.props.navigation.goBack();
+      Analytics.record({
+        name: 'action',
+        attributes: {page: 'forgotPasswordPage', actionType: 'resetPassword'}
+      });
     } catch(err) {
       console.log(err);
       this.setState({errorMessage: err.message});
@@ -97,7 +115,7 @@ export default class ForgotPasswordScreen extends Component<Props> {
                     Please Enter the code and your new password</Text>;
 
       form = <View style={styles.textInputContainer}>
-                 <TextInput style={styles.textInput} multiline={false} value={this.state.pwd}
+                 <TextInput style={styles.textInput} multiline={false} value={this.state.pwd} secureTextEntry={true}
                     placeholder= 'New Password' placeholderTextColor='gray' onChangeText={(pwd) => this.setState({pwd})}/>
                  <TextInput style={styles.textInput} multiline={false} value={this.state.confirmationCode}
                     placeholder='Confrimation Code' placeholderTextColor='gray' onChangeText={(confirmationCode) => this.setState({confirmationCode})}/>

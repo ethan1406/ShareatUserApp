@@ -4,10 +4,10 @@ import React, {Component} from 'react';
 import {StyleSheet, Text, View, Image, TouchableOpacity, TextInput} from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scrollview';
 import AsyncStorage from '@react-native-community/async-storage';
-import SafeAreaView from 'react-native-safe-area-view';
 import { Auth } from 'aws-amplify';
 import {primaryColor, secondaryColor, darkGray} from './Colors';
 import {headerFontSize} from './Dimensions';
+import { Analytics } from 'aws-amplify';
 
 type props = {};
 
@@ -27,11 +27,12 @@ export default class EditProfileScreen extends Component<props> {
 
         this._saveAttributes = this._saveAttributes.bind(this);
         this._changePassword = this._changePassword.bind(this);
+        this._switchSubPage = this._switchSubPage.bind(this);
     }
 
     static navigationOptions = ({navigation}) => {
         return {
-            headerLeft:( 
+            headerLeft: ()=> ( 
               <TouchableOpacity onPress={() => navigation.goBack(null)}>
                  <Image style={{height: 30, width: 30, marginLeft: 20, tintColor: primaryColor}} source={require('./img/backbtn.png')} />
               </TouchableOpacity>
@@ -50,6 +51,14 @@ export default class EditProfileScreen extends Component<props> {
 
 async componentDidMount() {
     try {
+      Analytics.record({
+        name: 'pageView',
+        attributes: {
+          page: 'profile',
+          subPage: 'editName'
+        }
+      });
+
       const firstName = await AsyncStorage.getItem('firstName');
       const lastName = await AsyncStorage.getItem('lastName');
       this.setState({firstName, lastName});
@@ -82,10 +91,16 @@ async _saveAttributes() {
     await AsyncStorage.setItem('firstName', firstName);
     await AsyncStorage.setItem('lastName', lastName);
     this.setState({errorMessage: 'saved successfully!', 'messageColor': 'green'});
-} catch(err) {
-    console.log(err);
-    this.setState({errorMessage: err.message, 'messageColor': 'red'});
-}
+
+    Analytics.record({
+      name: 'action',
+      attributes: {page: 'profile', actionType: 'changeName'}
+    });
+
+  } catch(err) {
+      console.log(err);
+      this.setState({errorMessage: err.message, 'messageColor': 'red'});
+  }
 }
 
 async _changePassword() {
@@ -96,19 +111,37 @@ async _changePassword() {
 
   if(!this._passwordReqVerification(this.state.oldPwd, this.state.newPwd, this.state.confirmNewPwd)){
     return;
+  }
+
+  try {
+      const user = await Auth.currentAuthenticatedUser();
+      const test = await Auth.changePassword(user, 
+          this.state.oldPwd, this.state.newPwd
+          );
+      this.setState({errorMessage: 'saved successfully!', 'messageColor': 'green'});
+
+      Analytics.record({
+        name: 'action',
+        attributes: {page: 'profile', actionType: 'changePassword'}
+      });
+  } catch(err) {
+      console.log(err);
+      this.setState({errorMessage: err.message, 'messageColor': 'red'});
+  }
 }
 
-try {
-    const user = await Auth.currentAuthenticatedUser();
-    const test = await Auth.changePassword(user, 
-        this.state.oldPwd, this.state.newPwd
-        );
-    this.setState({errorMessage: 'saved successfully!', 'messageColor': 'green'});
-} catch(err) {
-    console.log(err);
-    this.setState({errorMessage: err.message, 'messageColor': 'red'});
+_switchSubPage() {
+  Analytics.record({
+    name: 'pageView',
+    attributes: {
+      page: 'profile',
+      subPage: this.isChangePassword ? 'editPassword' : 'editName'
+    }
+  });
+
+  this.setState({isChangePassword: !this.state.isChangePassword, errorMessage: ''});
 }
-}
+
 
 render() {
     const isChangePassword = this.state.isChangePassword;
@@ -148,16 +181,16 @@ render() {
 
     return(
         <KeyboardAwareScrollView contentContainerStyle={styles.container}>
-        <Image style={styles.userIcon} source={require('./img/splash_logo.png')}/>
-        {form}
-        <TouchableOpacity 
-        onPress={()=> this.setState({isChangePassword: !this.state.isChangePassword, errorMessage: ''})} color='#000000'>
-        <Text style={styles.forgotBtnText}>{changeText}</Text>
-        </TouchableOpacity>  
-        <TouchableOpacity style={styles.signupBtn} onPress={!isChangePassword ? this._saveAttributes : this._changePassword} color='#000000'>
-        <Text style={styles.btnText}>Save</Text>
-        </TouchableOpacity>  
-        <Text style={[styles.errorMessage, {color: this.state.messageColor}]}>{this.state.errorMessage}</Text>
+          <Image style={styles.userIcon} source={require('./img/splash_logo.png')}/>
+          {form}
+          <TouchableOpacity 
+            onPress={this._switchSubPage} color='#000000'>
+            <Text style={styles.forgotBtnText}>{changeText}</Text>
+          </TouchableOpacity>  
+          <TouchableOpacity style={styles.signupBtn} onPress={!isChangePassword ? this._saveAttributes : this._changePassword} color='#000000'>
+            <Text style={styles.btnText}>Save</Text>
+          </TouchableOpacity>  
+          <Text style={[styles.errorMessage, {color: this.state.messageColor}]}>{this.state.errorMessage}</Text>
         </KeyboardAwareScrollView>
         );
 }

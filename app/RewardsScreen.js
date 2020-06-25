@@ -11,6 +11,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import Restaurant from './models/Restaurant';
 import {primaryColor, secondaryColor, darkGray} from './Colors';
 import {headerFontSize} from './Dimensions';
+import { Analytics } from 'aws-amplify';
 
 
   type Props = {};
@@ -32,6 +33,13 @@ import {headerFontSize} from './Dimensions';
     }
 
     async componentDidMount() {
+      Analytics.record({
+        name: 'pageView',
+        attributes: {
+          page: 'wallet'
+        }
+      });
+
       await this.fetchRewards();
 
       this.willFocusSubscription = this.props.navigation.addListener(
@@ -44,7 +52,6 @@ import {headerFontSize} from './Dimensions';
 
     componentWillUnmount() {
       if (this.willFocusSubscription !== undefined) {
-        console.log('remvoing')
         this.willFocusSubscription.remove();
       }
     }

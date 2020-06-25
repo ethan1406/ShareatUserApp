@@ -13,6 +13,7 @@ import Card from './models/Card';
 import OrderListItem from './components/OrderListItem';
 import {primaryColor, secondaryColor, darkGray, turquoise} from './Colors';
 import {headerFontSize} from './Dimensions';
+import { Analytics } from 'aws-amplify';
 
 
 type Props = {};
@@ -90,6 +91,12 @@ export default class ConfirmationScreen extends Component<Props> {
   }
 
   async componentDidMount() {
+
+    Analytics.record({
+      name: 'pageView',
+      attributes: {page: 'confirmation'}
+    });
+
     this._fetchCards();
     if (this.props.navigation.state.params.shouldPayRemainder) {
       try {
@@ -174,18 +181,29 @@ export default class ConfirmationScreen extends Component<Props> {
 
   _handleIndexChange = (index) => {
     var tipRate = 0.12;
+    var actionType = '';
     if (index == 0){
       tipRate = 0.12;
+      actionType = 'tipTwelve';
     } else if (index == 1) {
       tipRate = 0.15;
+      actionType = 'tipFifteen';
     } else if (index == 2) {
       tipRate = 0.18;
+      actionType = 'tipEighteen';
     } else if (index == 3) {
+      actionType = 'openCustomTip';
       this.setState({...this.state,
         selectedIndex: index, 
         dialogVisible: true});
       return;
     }
+
+    Analytics.record({
+      name: 'action',
+      attributes: {page: 'confirmation', actionType: actionType}
+    });
+
     var tip = Math.floor((this.state.sub_total) * tipRate);
     var total = parseInt(tip + this.state.sub_total + this.state.tax + this.state.remainingBalance, 10);
     
@@ -220,6 +238,11 @@ export default class ConfirmationScreen extends Component<Props> {
       tip: this.state.customTip,
       dialogVisible: false
     });
+
+    Analytics.record({
+      name: 'action',
+      attributes: {page: 'confirmation', actionType: 'enterCustomTip'}
+    });
   }
 
   _confirmAndPay = async () => {
@@ -234,6 +257,11 @@ export default class ConfirmationScreen extends Component<Props> {
          restaurantOmnivoreId: this.state.restaurantOmnivoreId,
          restaurantAmazonUserSub: this.state.restaurantAmazonUserSub,
          partyId: this.state.partyId
+      });
+
+      Analytics.record({
+        name: 'action',
+        attributes: {page: 'confirmation', actionType: 'pay'}
       });
 
       this.props.navigation.navigate('RewardAccumulation', {

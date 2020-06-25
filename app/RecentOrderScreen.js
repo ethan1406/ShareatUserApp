@@ -10,6 +10,7 @@ import {primaryColor, secondaryColor, darkGray} from './Colors';
 import { Storage } from 'aws-amplify';
 import RecentOrder from './models/RecentOrder';
 import {headerFontSize} from './Dimensions';
+import { Analytics } from 'aws-amplify';
 
 
 type Props = {};
@@ -27,6 +28,11 @@ export default class RecentOrderScreen extends Component<Props> {
   }
 
   async componentDidMount() {
+    Analytics.record({
+      name: 'pageView',
+      attributes: {page: 'receipts'}
+    });
+
     await this.fetchRecentOrders();
   }
 
@@ -56,11 +62,11 @@ export default class RecentOrderScreen extends Component<Props> {
       const amazonUserSub = await AsyncStorage.getItem('amazonUserSub');
       const {data} = await axios.get(`${baseURL}/user/${amazonUserSub}/receipts`);
 
-      let promises = await data.map( async (reward) => {
-            var recentOrder = new RecentOrder(reward.time, reward.restaurantName, 
-              reward.address);
+      let promises = await data.map( async (order) => {
+            var recentOrder = new RecentOrder(order.time, order.restaurantName, 
+              order.address, order.totals, order.partyId, order.paymentMethod);
             try{
-              const imageUrl = await Storage.get(`restaurants/${reward.restaurantName}/cover.jpg`);
+              const imageUrl = await Storage.get(`restaurants/${order.restaurantName}/cover.jpg`);
               recentOrder.setImageUrl(imageUrl);
             } catch(err) {
               console.log(err);

@@ -5,6 +5,7 @@ import {StyleSheet, Text, View, TouchableOpacity, Image} from 'react-native';
 import {baseURL} from '../Constants';
 import {secondaryColor, darkGray} from '../Colors';
 import axios from 'axios';
+import { Analytics } from 'aws-amplify';
 
 type Props = {};
 export default class OrderListItem extends Component<Props> {
@@ -30,6 +31,11 @@ export default class OrderListItem extends Component<Props> {
         axios.post(`${baseURL}/party/order/split/check`, 
           {partyId: this.props.partyId, orderId: this.props.id,
            amazonUserSub, firstName, lastName});
+
+        Analytics.record({
+          name: 'action',
+          attributes: {page: 'check', actionType: 'splitDish'}
+        });
       } catch (err) {
         console.log(err);
       }

@@ -6,6 +6,7 @@ import {headerFontSize} from './Dimensions';
 import {baseURL} from './Constants';
 import axios from 'axios';
 import BackgroundTimer from 'react-native-background-timer';
+import { Analytics } from 'aws-amplify';
 
 type Props = {};
 var min = 2;
@@ -38,6 +39,15 @@ export default class RewardRedemptionScreen extends Component<Props> {
                 fontSize: headerFontSize, 
             } 
         };
+    }
+
+    async componentDidMount() {
+      Analytics.record({
+        name: 'pageView',
+        attributes: {
+          page: 'rewardRedemption'
+        }
+      });
     }
 
     _countdown() {
@@ -86,6 +96,11 @@ export default class RewardRedemptionScreen extends Component<Props> {
                 redemptionTime: data.redemptionTime,
                 redemptionPoints: pointsRequired
             });
+
+            Analytics.record({
+                name: 'action',
+                attributes: {page: 'rewardRedemption', actionType: 'redeemReward'}
+              });
         } catch (err) {
             console.log(err);
         }

@@ -9,6 +9,7 @@ import OrderListItem from './components/OrderListItem';
 import {primaryColor, secondaryColor, darkGray, pink, red, lightPink, purple, blue, turquoise, green} from './Colors';
 import {headerFontSize} from './Dimensions';
 import { pusherId } from './Constants';
+import { Analytics } from 'aws-amplify';
 
 
 type Props = {};
@@ -106,6 +107,13 @@ export default class CheckSplitScreen extends Component<Props> {
     };
   }
 
+  componentDidMount() {
+    Analytics.record({
+      name: 'pageView',
+      attributes: {page: 'check'}
+    });
+  }
+
   _createColorMap = (members) => {
     var colorMap = {};
     var colorIndex = 0;
@@ -121,6 +129,11 @@ export default class CheckSplitScreen extends Component<Props> {
   _keyExtractor = (item) => item._id;
 
   _handleIndexChange = (index) => {
+    Analytics.record({
+      name: 'action',
+      attributes: {page: 'check', actionType: index == 0 ? 'tapGroupOrder' : 'tapMyOrder'}
+    });
+
     this.setState({
       ...this.state,
       selectedIndex: index,
@@ -168,6 +181,11 @@ export default class CheckSplitScreen extends Component<Props> {
     // if all other members have paid, the last person pays the remainder
     const shouldPayRemainder = this.state.members.length > 1 
         && (this.state.members.filter(member => member.hasPaid == false)).length == 1 ;
+
+    Analytics.record({
+      name: 'action',
+      attributes: {page: 'check', actionType: 'tapConfirmation'}
+    });
 
   
     this.props.navigation.navigate('Confirmation', {

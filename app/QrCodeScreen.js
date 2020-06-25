@@ -6,7 +6,7 @@ import {Text} from 'react-native';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import {primaryColor} from './Colors';
 import AsyncStorage from '@react-native-community/async-storage';
-import { Auth } from 'aws-amplify';
+import { Auth, Analytics } from 'aws-amplify';
 
 import axios from 'axios';
 
@@ -33,6 +33,11 @@ class QrCodeScreen extends Component<Props> {
 
     console.log(jwt);
 
+    Analytics.record({
+      name: 'pageView',
+      attributes: {page: 'qr'}
+    });
+
     // axios.get('https://www.shareatpay.com/party/5b346f48d585fb0e7d3ed3fc/6').then((response) => {
     //   this.props.navigation.navigate('Check', {
     //     data: response.data.orders, 
@@ -49,6 +54,11 @@ class QrCodeScreen extends Component<Props> {
   }
 
   waitAndreactivate() {
+    Analytics.record({
+      name: 'action',
+      attributes: {page: 'qr', actionType: 'scanFailure'}
+    });
+
      setTimeout(() => {
         this.scanner.reactivate();
         this.setState({message: 'Scan Shareat QR Code', messageColor: 'white'});
@@ -69,6 +79,11 @@ class QrCodeScreen extends Component<Props> {
         const userInfo = {amazonUserSub, firstName, lastName};
 
         const response =  await axios.post(e.data, {amazonUserSub});
+
+        Analytics.record({
+          name: 'action',
+          attributes: {page: 'qr', actionType: 'scanSuccess'}
+        });
 
         this.props.navigation.navigate('Check', {
           data: response.data.orders, 

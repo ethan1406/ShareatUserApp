@@ -8,8 +8,9 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-community/async-storage';
 import {primaryColor, secondaryColor, darkGray, turquoise, gray} from './Colors';
 import {headerFontSize} from './Dimensions';
-type Props = {};
+import { Analytics } from 'aws-amplify';
 
+type Props = {};
 
 export default class PaymentMethodsScreen extends Component<Props> {
 
@@ -23,6 +24,11 @@ export default class PaymentMethodsScreen extends Component<Props> {
   }
 
   async componentDidMount() {
+    Analytics.record({
+      name: 'pageView',
+      attributes: {page: 'paymentMethod'}
+    });
+
     this._fetchCards();
   }
 
@@ -86,6 +92,12 @@ export default class PaymentMethodsScreen extends Component<Props> {
         const amazonUserSub = await AsyncStorage.getItem('amazonUserSub');
         const {data} = await axios.post(`${baseURL}/user/${amazonUserSub}/changeDefaultPayment`, {cardId: id});
         this.setState({cards: data.cards, shouldRefresh : false});
+
+        Analytics.record({
+          name: 'action',
+          attributes: {page: 'paymentMethod', actionType: 'changePaymentMethod'}
+        });
+
      } catch (err) {
         this.setState({errorMessage: err.response.data.error});
      }

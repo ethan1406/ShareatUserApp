@@ -9,6 +9,7 @@ import {baseURL} from './Constants';
 import axios from 'axios';
 import {primaryColor, secondaryColor, gray, darkGray, turquoise} from './Colors';
 import {headerFontSize} from './Dimensions';
+import { Analytics } from 'aws-amplify';
 
 type Props = {};
 const width = Dimensions.get('window').width; 
@@ -60,6 +61,13 @@ export default class RestaurantScreen extends Component<Props> {
   }
 
   async componentDidMount() {
+
+    Analytics.record({
+        name: 'pageView',
+        attributes: {
+          page: 'restaurant'
+        }
+      });
     
     try {
       const restaurantAmazonUserSub = this.props.navigation.state.params.restaurantAmazonUserSub;

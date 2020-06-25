@@ -4,9 +4,7 @@ import React, {Component} from 'react';
 import {StyleSheet, ScrollView,
   TouchableOpacity, Text, Image, StatusBar} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
-import {baseURL} from './Constants';
 import { Auth, Analytics } from 'aws-amplify';
-import axios from 'axios';
 import Dialog from 'react-native-dialog';
 import {primaryColor, secondaryColor, darkGray, gray} from './Colors';
 import {headerFontSize} from './Dimensions';
@@ -30,6 +28,11 @@ import {headerFontSize} from './Dimensions';
     }
 
     async componentDidMount() {
+      Analytics.record({
+        name: 'pageView',
+        attributes: {page: 'options'}
+      });
+
       try {
         const firstName = await AsyncStorage.getItem('firstName');
         const lastName = await AsyncStorage.getItem('lastName');
@@ -53,6 +56,10 @@ import {headerFontSize} from './Dimensions';
     try {
       await Auth.signOut();
       this.props.navigation.navigate('First');
+      Analytics.record({
+        name: 'action',
+        attributes: {page: 'options', actionType: 'signOut'}
+      });
     }catch(err) {
       console.log(err);
     }
