@@ -270,7 +270,7 @@ const styles = StyleSheet.create({
   },
   signupBtn: {
     marginTop: 10,
-    marginBottom: 0 ,
+    marginBottom: 10,
     width: '80%',
     height: 45,
     borderRadius: 40,

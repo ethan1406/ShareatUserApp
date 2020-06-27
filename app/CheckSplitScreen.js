@@ -226,7 +226,7 @@ export default class CheckSplitScreen extends Component<Props> {
     } else if (isGroupCheck) {
       instructionMessage = 'Double Tap the Dishes You\'ve Shared!';
     } else {
-      instructionMessage = 'If this is a group order, your friends can scan the code and split the check with you.';
+      instructionMessage = 'For group orders, your friends can scan the code and split the check.';
     }
 
     return (

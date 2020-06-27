@@ -1,8 +1,8 @@
 
 export default class RecentOrder {
-	constructor(timeOfOrder, name, address, totals, partyId, paymentMethod) {
+	constructor(timeOfOrder, restaurantName, address, totals, partyId, paymentMethod) {
 		this.timeOfOrder = timeOfOrder;
-		this.name = name;
+		this.restaurantName = restaurantName;
 		this.address = address;
 		this.imageUrl = '';
 		this.totals = totals;

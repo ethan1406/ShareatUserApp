@@ -3,7 +3,7 @@
 
 import React, {Component} from 'react';
 import {StyleSheet, Text, View, TouchableOpacity, 
-  Image, FlatList, Dimensions} from 'react-native';
+  Image, FlatList} from 'react-native';
 
 import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
@@ -14,7 +14,6 @@ import { Analytics } from 'aws-amplify';
 
 
 type Props = {};
-const screenWidth= Dimensions.get('window').width;
 export default class ReceiptScreen extends Component<Props> {
 
   constructor(props) {
@@ -87,13 +86,15 @@ export default class ReceiptScreen extends Component<Props> {
 
     return (
       <View style={styles.container}>
-        <View style={{width:screenWidth}}>
+        <View style={styles.headerContainer}>
           <Image style={styles.restaurantIcon} source={{uri: order.imageUrl}}/>
-          <Text style={[{marginLeft: 25, marginTop: 20},styles.bigText]}> { order.name } </Text>
-          <Text style={[{marginLeft: 25, marginTop: 10},styles.smallText]}> { order.address } </Text>
+          <View style={styles.headerTextContainer}>
+            <Text style={[{marginLeft: 25, marginTop: 20},styles.bigText]}> { order.restaurantName } </Text>
+            <Text style={[{marginLeft: 25, marginTop: 10,},styles.smallText]}> { order.address } </Text>
+          </View>
         </View>
         <FlatList
-          style={{marginHorizontal: 25, width:screenWidth}}
+          style={{margin: 25, width:'90%'}}
           data={this.state.myOrders}
           extraData={this.state.refresh}
           keyExtractor={this._keyExtractor}
@@ -101,28 +102,30 @@ export default class ReceiptScreen extends Component<Props> {
           renderItem={this._renderItem}
         />
         <View style={styles.tipContainer}>
+            <View style={[styles.feeContainer, {width: '95%'}]}>
               <Text style={[{marginLeft: 25},styles.bigText]}>Payment</Text>
               <Text style={[{marginLeft: 25, marginTop: 5, marginBottom: 5},styles.smallText]}>{`${order.paymentMethod.type.toUpperCase()} ${order.paymentMethod.last4Digits}`}</Text>
-              <View style={styles.lineSeparator} />         
-              <View style={[styles.feeContainer]}>
-                <Text style={[{marginLeft: 25},styles.smallText]}>Subtotal </Text>
-                <Text style={[{marginRight: 25},styles.smallText]}>{`$${(order.totals.subTotal/100).toFixed(2)}`}</Text>
-              </View>
-              <View style={styles.feeContainer}>
-                <Text style={[{marginLeft: 25},styles.smallText]}>Tax & Fees </Text>
-                <Text style={[{marginRight: 25},styles.smallText]}>{`$${(order.totals.tax/100).toFixed(2)}`}</Text>
-              </View>
-              <View style={styles.feeContainer}>
-                <Text style={[{marginLeft: 25},styles.smallText]}>Tip </Text>
-                <Text style={[{marginRight: 25},styles.smallText]}>{`$${(order.totals.tip/100).toFixed(2)}`}</Text>
-              </View>
-              <View style={styles.lineSeparator} />
-              <View style={[styles.feeContainer,{marginTop: 3, marginBottom: 40}]}>
-                <Text style={[{marginLeft: 25},styles.bigText]}>Total </Text>
-                <Text style={[{marginRight: 25},styles.bigText]}>
-                  {`$${((order.totals.subTotal + order.totals.tip + order.totals.tax)/100).toFixed(2)}`}
-                </Text>
-              </View>
+            </View>
+            <View style={styles.lineSeparator} />         
+            <View style={[styles.feeContainer]}>
+              <Text style={[{marginLeft: 25},styles.smallText]}>Subtotal </Text>
+              <Text style={[{marginRight: 25},styles.smallText]}>{`$${(order.totals.subTotal/100).toFixed(2)}`}</Text>
+            </View>
+            <View style={styles.feeContainer}>
+              <Text style={[{marginLeft: 25},styles.smallText]}>Tax & Fees </Text>
+              <Text style={[{marginRight: 25},styles.smallText]}>{`$${(order.totals.tax/100).toFixed(2)}`}</Text>
+            </View>
+            <View style={styles.feeContainer}>
+              <Text style={[{marginLeft: 25},styles.smallText]}>Tip </Text>
+              <Text style={[{marginRight: 25},styles.smallText]}>{`$${(order.totals.tip/100).toFixed(2)}`}</Text>
+            </View>
+            <View style={styles.lineSeparator} />
+            <View style={[styles.feeContainer,{marginTop: 3, marginBottom: 40}]}>
+              <Text style={[{marginLeft: 25},styles.bigText]}>Total </Text>
+              <Text style={[{marginRight: 25},styles.bigText]}>
+                {`$${((order.totals.subTotal + order.totals.tip + order.totals.tax)/100).toFixed(2)}`}
+              </Text>
+            </View>
         </View>
       </View>
     );
@@ -134,8 +137,20 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     flex: 1, 
     justifyContent: 'flex-start', 
-    alignItems: 'flex-start', 
+    alignItems: 'center', 
     flexDirection: 'column'
+  },
+  headerContainer: {
+    justifyContent: 'flex-start', 
+    alignItems: 'center', 
+    flexDirection: 'row',
+    width: '80%'
+  },
+  headerTextContainer: {
+    justifyContent: 'center', 
+    alignItems: 'flex-start', 
+    flexDirection: 'column',
+    width: '80%'
   },
   cellContainer : {
     marginTop: 15,
@@ -143,11 +158,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: gray,
   },
-  headerContainer: {
-    flexDirection:'row',
-    justifyContent: 'space-between'
-  },
-   tipContainer: {
+  tipContainer: {
     marginTop: 20,
     width: '100%',
     flexDirection: 'column',
@@ -157,7 +168,7 @@ const styles = StyleSheet.create({
   feeContainer: {
     flexDirection: 'row',
     width: '100%',
-    marginTop: 10,
+    marginBottom: 10,
     alignItems: 'center',
     justifyContent: 'space-between'
   },
@@ -167,19 +178,19 @@ const styles = StyleSheet.create({
      alignSelf: 'center',
      borderBottomWidth: 1, 
      paddingHorizontal: 15,
-     marginVertical: 15
+     marginVertical: 10
   },
   smallText: {
     color: darkGray,
-    fontSize: 14,
+    fontSize: 13,
   },
   bigText: {
     fontSize: 15,
   },
   restaurantIcon: {
-      marginTop: 20,
-      height: 80,
-      width: 80,
+      marginTop: 15,
+      height: 60,
+      width: 60,
       borderRadius: 10,
       alignSelf: 'center',
       borderColor: darkGray,

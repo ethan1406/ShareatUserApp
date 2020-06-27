@@ -20,7 +20,6 @@ export default class RecentOrderScreen extends Component<Props> {
     super(props);
     this.state = {
       recentOrders: [RecentOrder],
-      refreshing: false
     };
 
     this.onRefresh = this.onRefresh.bind(this);
@@ -95,9 +94,9 @@ export default class RecentOrderScreen extends Component<Props> {
 
   render() {
     return (
-      <ScrollView style={styles.container} resizeMode='contain' refreshControl={
+      <ScrollView resizeMode='contain' refreshControl={
           <RefreshControl tintColor={primaryColor} colors={[primaryColor]} refreshing={this.state.refreshing} onRefresh={this.onRefresh} />}
-          contentContainerStyle={{flex:1, justifyContent: 'flex-start', alignItems: 'flex-start', flexDirection: 'column'}}>
+          contentContainerStyle={styles.container} style={{backgroundColor: 'white'}}>
         <Text style={styles.placeholderText}> </Text>
         {this.state.recentOrders.map((order, index) => {
            const date = new Date(order.timeOfOrder);
@@ -108,15 +107,18 @@ export default class RecentOrderScreen extends Component<Props> {
            }
            return (
             <View style={styles.rewardContainer} key={index} >
-              <TouchableOpacity key={index} style={{flexDirection:'row'}}
+              <TouchableOpacity key={index} style={{flexDirection:'row', width: '80%'}}
                 onPress={()=> this._lookupReceipt(order)}>
                 <Image style={styles.restaurantIcon} source={{uri: order.imageUrl}}/>
                 <View>
-                <Text style={{marginBottom: 3}}>{order.restaurantName} </Text>
-                <Text style={{color: 'gray', marginBottom: 3}}>{order.address}</Text>
-                <Text style={{color: 'gray', marginBottom: 15}}>{
-                  date.getMonth()+1}/{date.getDate()}/{date.getFullYear()} at {hours}:{date.getMinutes()} {pmAm}
-                </Text>
+                <Text style={{marginBottom: 3, marginRight: 15}}>{order.restaurantName} </Text>
+                <Text style={{color: 'gray', marginBottom: 3, marginRight: 15, fontSize: 12}}>{order.address}</Text>
+                {
+                    order.timeOfOrder != undefined ?
+                    <Text style={{color: 'gray', marginBottom: 15}}>
+                        {date.getMonth()+1}/{date.getDate()}/{date.getFullYear()} at {hours}:{date.getMinutes()} {pmAm}
+                    </Text> : null
+                }
                 </View>
               </TouchableOpacity>
               {index == this.state.recentOrders.length - 1 ? null : <View style={styles.separator}/>}
@@ -131,19 +133,16 @@ export default class RecentOrderScreen extends Component<Props> {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'white',
+    flex:1, 
+    justifyContent: 'flex-start', 
+    alignItems: 'flex-start', 
+    flexDirection: 'column'
   },
   rewardContainer: {
     alignSelf: 'center',
     marginTop: 5,
     marginBottom: 10,
-    width:'90%',
-  },
-  btnText: {
-    color:'white',
-    textAlign:'left',
-    marginLeft: 15,
-    paddingTop: 10
+    width: '90%'
   },
   restaurantIcon: {
     marginTop: 7,

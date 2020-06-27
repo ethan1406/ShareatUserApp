@@ -2,7 +2,7 @@
 'use strict';
 
 import React, {Component} from 'react';
-import {Text} from 'react-native';
+import {Text, Dimensions} from 'react-native';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import {primaryColor} from './Colors';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -11,6 +11,8 @@ import { Auth, Analytics } from 'aws-amplify';
 import axios from 'axios';
 
 type Props = {};
+
+const screenHeight = Dimensions.get('window').height;
 class QrCodeScreen extends Component<Props> {
 
   constructor(props) {
@@ -38,18 +40,28 @@ class QrCodeScreen extends Component<Props> {
       attributes: {page: 'qr'}
     });
 
-    // axios.get('https://www.shareatpay.com/party/5b346f48d585fb0e7d3ed3fc/6').then((response) => {
-    //   this.props.navigation.navigate('Check', {
-    //     data: response.data.orders, 
-    //     restaurantName: response.data.restaurantName,
-    //     orderTotal: response.data.orderTotal,
-    //     members: response.data.members,
-    //     partyId: response.data._id,
-    //     restaurantId: response.data.restaurantId
-    //   });
-    // }).catch((err) => {
-    //   console.log(err);
-    // });
+    const amazonUserSub = await AsyncStorage.getItem('amazonUserSub');
+    const firstName = await AsyncStorage.getItem('firstName');
+        const lastName = await AsyncStorage.getItem('lastName');
+
+const userInfo = {amazonUserSub, firstName, lastName};
+
+    axios.post('https://api.shareatpay.com/party/i7EpAReT/1', {amazonUserSub}).then((response) => {
+      this.props.navigation.navigate('Check', {
+         data: response.data.orders, 
+          restaurantName: response.data.restaurant_name,
+          guestCount: response.data.guest_count,
+          totals: response.data.totals,
+          ticketId: response.data.omnivore_ticket_id,
+          members: response.data.members,
+          partyId: response.data._id,
+          restaurantOmnivoreId: response.data.restaurant_omnivore_id,
+          restaurantAmazonUserSub: response.data.restaurantAmazonUserSub,
+          userInfo: userInfo
+      });
+    }).catch((err) => {
+      console.log(err);
+    });
   
   }
 
@@ -122,11 +134,11 @@ class QrCodeScreen extends Component<Props> {
             ref={(node) => { this.scanner = node; }}
             onRead={this.onSuccess.bind(this)}
             topViewStyle={{height: 0, flex: 0}}
-            bottomViewStyle={{height: 0, flex: 0, marginBottom: '-90%'}}
+            bottomViewStyle={{height: 0, flex: 0, marginBottom: '-80%'}}
             showMarker={true}
             markerStyle={{borderColor: primaryColor, borderRadius: 20, marginBottom: '20%'}}
             cameraProps={{captureAudio: false}}
-            cameraStyle={{alignSelf:'center', height: '200%'}}
+            cameraStyle={{alignSelf:'center', height: screenHeight}}
             containerStyle={{alignItems:'space-between'}}
             bottomContent={<Text style={{color: this.state.messageColor, fontSize: 16}}> {this.state.message} </Text>}
           />

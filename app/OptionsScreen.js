@@ -1,7 +1,7 @@
 'use strict';
 
 import React, {Component} from 'react';
-import {StyleSheet, ScrollView,
+import {StyleSheet, ScrollView, View,
   TouchableOpacity, Text, Image, StatusBar} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import { Auth, Analytics } from 'aws-amplify';
@@ -100,46 +100,48 @@ import {headerFontSize} from './Dimensions';
 
   render() {
     return (
-      <ScrollView resizeMode='contain' contentContainerStyle={styles.container}>
-        <StatusBar
-          backgroundColor= {secondaryColor}
-          barStyle="dark-content"
-        />
-        <Text style={styles.name}> {this.state.firstName} </Text>
-        <Text style={styles.email}> {this.state.email} </Text>
-         <TouchableOpacity style={styles.signupBtn} onPress={()=> {this.props.navigation.navigate('EditProfile');}} color='#000000'>
-          <Text style={styles.btnText}> Edit Profile </Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.optionContainer} onPress={()=> {this.props.navigation.navigate('RecentOrder');}} color='#000000'>
-          <Image style={[styles.optionImage, {height: 30}]} source={require('./img/receipt.png')} />
-          <Text style={styles.optionText}> Receipts </Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.optionContainer} onPress={()=> {this.props.navigation.navigate('PaymentMethods');}} color='#000000'>
-          <Image style={[styles.optionImage, {height: 20}]} source={require('./img/stripe/card_expiry.png')} />
-          <Text style={styles.optionText}> Payment Methods</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.optionContainer} onPress={()=> {this.navigateToInformationScreen('contact-us');}} color='#000000'>
-          <Image style={[styles.optionImage, {height: 28}]} source={require('./img/about.png')} />
-          <Text style={styles.optionText}> Contact Us </Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.optionContainer} onPress={() => this.navigateToInformationScreen('private-policy')} color='#000000'>
-          <Image style={[styles.optionImage, {height: 28}]} source={require('./img/ic_privacy.png')} />
-          <Text style={styles.optionText}> Privacy Policy</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.optionContainer} onPress={() => this.navigateToInformationScreen('terms-of-use')} color='#000000'>
-          <Image style={[styles.optionImage, {height: 28}]} source={require('./img/ic_terms_of_us.png')} />
-          <Text style={styles.optionText}> Terms of Use </Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.optionContainer} onPress={this._signoutRequest} color='#000000'>
-          <Image style={[styles.optionImage, {height: 28}]} source={require('./img/ic_sign_out.png')} />
-          <Text style={styles.optionText}> Sign Out </Text>
-        </TouchableOpacity>
-        <Dialog.Container visible={this.state.dialogVisible}>
-          <Dialog.Description>Are you sure you want to sign out?</Dialog.Description>
-          <Dialog.Button label="Cancel" onPress={()=> { this.setState({ dialogVisible: false });}} />
-          <Dialog.Button label="Sign Out" onPress={()=> {this._signout();}} />
-        </Dialog.Container>
-      </ScrollView>
+      <View style={{flex:1}}>
+        <ScrollView contentContainerStyle={styles.container} bounces={false}>
+          <StatusBar
+            backgroundColor= {secondaryColor}
+            barStyle="dark-content"
+          />
+            <Text style={styles.name}> {this.state.firstName} </Text>
+            <Text style={styles.email}> {this.state.email} </Text>
+             <TouchableOpacity style={styles.signupBtn} onPress={()=> {this.props.navigation.navigate('EditProfile');}} color='#000000'>
+              <Text style={styles.btnText}> Edit Profile </Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.optionContainer} onPress={()=> {this.props.navigation.navigate('RecentOrder');}} color='#000000'>
+              <Image style={[styles.optionImage, {height: 30}]} source={require('./img/receipt.png')} />
+              <Text style={styles.optionText}> Receipts </Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.optionContainer} onPress={()=> {this.props.navigation.navigate('PaymentMethods');}} color='#000000'>
+              <Image style={[styles.optionImage, {height: 20}]} source={require('./img/stripe/card_expiry.png')} />
+              <Text style={styles.optionText}> Payment Methods</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.optionContainer} onPress={()=> {this.navigateToInformationScreen('contact-us');}} color='#000000'>
+              <Image style={[styles.optionImage, {height: 28}]} source={require('./img/about.png')} />
+              <Text style={styles.optionText}> Contact Us </Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.optionContainer} onPress={() => this.navigateToInformationScreen('private-policy')} color='#000000'>
+              <Image style={[styles.optionImage, {height: 28}]} source={require('./img/ic_privacy.png')} />
+              <Text style={styles.optionText}> Privacy Policy</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.optionContainer} onPress={() => this.navigateToInformationScreen('terms-of-use')} color='#000000'>
+              <Image style={[styles.optionImage, {height: 28}]} source={require('./img/ic_terms_of_us.png')} />
+              <Text style={styles.optionText}> Terms of Use </Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.optionContainer} onPress={this._signoutRequest} color='#000000'>
+              <Image style={[styles.optionImage, {height: 28}]} source={require('./img/ic_sign_out.png')} />
+              <Text style={styles.optionText}> Sign Out </Text>
+            </TouchableOpacity>
+          </ScrollView>
+          <Dialog.Container visible={this.state.dialogVisible}>
+            <Dialog.Description>Are you sure you want to sign out?</Dialog.Description>
+            <Dialog.Button label="Cancel" onPress={()=> { this.setState({ dialogVisible: false });}} />
+            <Dialog.Button label="Sign Out" onPress={()=> {this._signout();}} />
+          </Dialog.Container>
+      </View>
       );
   }
 }
@@ -148,8 +150,8 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'column',
     backgroundColor: 'white',
-    flex:1, 
     justifyContent: 'flex-start', 
+    flexGrow: 1,
     alignItems: 'center'
   },
   optionContainer: {
