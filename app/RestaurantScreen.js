@@ -35,7 +35,8 @@ export default class RestaurantScreen extends Component<Props> {
         rewardId: '',
         redemptionTime: '',
         redemptionPoints: 0
-      }
+      },
+      hasNetwork: true
     };
 
     this.navigateToRedeemScreen = this.navigateToRedeemScreen.bind(this);
@@ -80,6 +81,9 @@ export default class RestaurantScreen extends Component<Props> {
 
     } catch (err) {
       console.log(err);
+      if (!err.status) {
+        this.setState({hasNetwork: false});
+      }
       this.setState({errorMessage: err.response.data.error});
     }
 
@@ -105,10 +109,6 @@ export default class RestaurantScreen extends Component<Props> {
 
   rewardRedemptionHandler = (redemptionReward) => {
     this.setState({didRedeem: true, redemptionReward});
-  }
-
-  componentWillUnmount() {
-    this.willFocusSubscription.remove();
   }
 
   navigateToRedeemScreen = (pointsRequired, rewardTitle, rewardId) => {
@@ -185,7 +185,9 @@ export default class RestaurantScreen extends Component<Props> {
         </View>;
     }
 
-    return (
+    var displayView = null;
+    if (this.state.hasNetwork) {
+      displayView = 
       <ScrollView resizeMode='contain' contentContainerStyle={styles.container} bounces={false} >
         <StatusBar backgroundColor={secondaryColor} barStyle={'dark-content'}/>
         <View style={{marginHorizontal: 15}}>
@@ -232,8 +234,16 @@ export default class RestaurantScreen extends Component<Props> {
           <Text style={{fontWeight: 'bold'}}> Description </Text>
           <Text style={{marginVertical: 20}}> {this.state.merchant.details} </Text>
         </View>
-      </ScrollView>
-      );
+      </ScrollView>;
+    } else {
+      displayView =
+      <View style={[styles.container, {alignItems: 'center', flex:1}]}>
+        <Image style={{height: 100, width: 100, marginVertical: 15}} source={require('./img/ic_network_error.png')}/>
+        <Text>Please make sure that you have network connection</Text>
+      </View>;
+    }
+
+    return (displayView);
   }
 }
 

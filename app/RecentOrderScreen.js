@@ -20,6 +20,7 @@ export default class RecentOrderScreen extends Component<Props> {
     super(props);
     this.state = {
       recentOrders: [RecentOrder],
+      hasNetwork: true
     };
 
     this.onRefresh = this.onRefresh.bind(this);
@@ -78,6 +79,9 @@ export default class RecentOrderScreen extends Component<Props> {
       });
 
     } catch (err) {
+      if (!err.status) {
+        this.setState({hasNetwork: false});
+      }
       console.log(err);
     }
   };
@@ -93,11 +97,14 @@ export default class RecentOrderScreen extends Component<Props> {
   }
 
   render() {
-    return (
+
+    var displayView = null;
+    if (this.state.hasNetwork) {
+      displayView = 
       <ScrollView resizeMode='contain' refreshControl={
           <RefreshControl tintColor={primaryColor} colors={[primaryColor]} refreshing={this.state.refreshing} onRefresh={this.onRefresh} />}
           contentContainerStyle={styles.container} style={{backgroundColor: 'white'}}>
-        <Text style={styles.placeholderText}> </Text>
+        <Text style={styles.placeholderText}/>
         {this.state.recentOrders.map((order, index) => {
            const date = new Date(order.timeOfOrder);
            var hours = date.getHours();
@@ -126,8 +133,16 @@ export default class RecentOrderScreen extends Component<Props> {
             ); 
           })
         }
-      </ScrollView>
-    );
+      </ScrollView>;
+    } else {
+      displayView =
+      <View style={[styles.container, {alignItems: 'center'}]}>
+        <Image style={{height: 100, width: 100, marginVertical: 15}} source={require('./img/ic_network_error.png')}/>
+        <Text>Please make sure that you have network connection</Text>
+      </View>;
+    }
+
+    return (displayView);
   }
 }
 
@@ -136,7 +151,8 @@ const styles = StyleSheet.create({
     flex:1, 
     justifyContent: 'flex-start', 
     alignItems: 'flex-start', 
-    flexDirection: 'column'
+    flexDirection: 'column',
+    backgroundColor: 'white'
   },
   rewardContainer: {
     alignSelf: 'center',

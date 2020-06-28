@@ -1,6 +1,7 @@
 'use strict';
 import React, {Component} from 'react';
 import {StyleSheet, View, Text, Alert, TouchableOpacity, Image, SafeAreaView}from 'react-native';
+import Dialog from 'react-native-dialog';
 import {primaryColor, secondaryColor, darkGray} from './Colors';
 import {headerFontSize} from './Dimensions';
 import {baseURL} from './Constants';
@@ -16,7 +17,8 @@ export default class RewardRedemptionScreen extends Component<Props> {
         super(props);
 
         this.state = {
-            isShowingCountDown: false
+            isShowingCountDown: false,
+            dialogVisible: false
         };
 
         this.goBack = this.goBack.bind(this);
@@ -52,27 +54,6 @@ export default class RewardRedemptionScreen extends Component<Props> {
 
     _countdown() {
         this._redeemRewardApiCall();
-        this.setState({
-            min: min,
-            sec: sec,
-        });
-        BackgroundTimer.runBackgroundTimer(() => { 
-            if (this.state.sec == 0 && this.state.min != 0) {
-                min--;
-                sec = 59;
-                this.setState({
-                    min: min,
-                    sec: sec,
-                });
-            } else if (this.state.sec == 0 && this.state.min == 0) {
-                BackgroundTimer.stopBackgroundTimer();
-            } else {
-                sec--;
-                this.setState({
-                    sec: sec,
-                });
-            }
-        }, 1000);
     }
 
     _redeemRewardApiCall = async () => {
@@ -97,12 +78,40 @@ export default class RewardRedemptionScreen extends Component<Props> {
                 redemptionPoints: pointsRequired
             });
 
+            this.setState({
+                min: min,
+                sec: sec,
+            });
+            BackgroundTimer.runBackgroundTimer(() => { 
+                if (this.state.sec == 0 && this.state.min != 0) {
+                    min--;
+                    sec = 59;
+                    this.setState({
+                        min: min,
+                        sec: sec,
+                    });
+                } else if (this.state.sec == 0 && this.state.min == 0) {
+                    BackgroundTimer.stopBackgroundTimer();
+                } else {
+                    sec--;
+                    this.setState({
+                        sec: sec,
+                    });
+                }
+            }, 1000);
+
             Analytics.record({
                 name: 'action',
                 attributes: {page: 'rewardRedemption', actionType: 'redeemReward'}
               });
         } catch (err) {
+            this.setState({dialogVisible: true});
+            Analytics.record({
+                name: 'action',
+                attributes: {page: 'rewardRedemption', actionType: 'redeemReward'}
+              });
             console.log(err);
+
         }
 
     }
@@ -158,6 +167,10 @@ export default class RewardRedemptionScreen extends Component<Props> {
                         );}}>
                 <Text style={styles.btnText}>Redeem</Text>
                 </TouchableOpacity>
+                <Dialog.Container visible={this.state.dialogVisible}>
+                    <Dialog.Description>A network error has occurred. Please try again. </Dialog.Description>
+                    <Dialog.Button label="Dismiss" onPress={()=> { this.setState({ dialogVisible: false });}} />
+              </Dialog.Container>
             </SafeAreaView>
         );
     }

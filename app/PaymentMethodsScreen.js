@@ -19,7 +19,8 @@ export default class PaymentMethodsScreen extends Component<Props> {
     this.state = { 
       cards: [],
       errorMessage: '',
-      shouldRefresh: false
+      shouldRefresh: false,
+      hasNetwork: true
     };
   }
 
@@ -41,7 +42,12 @@ export default class PaymentMethodsScreen extends Component<Props> {
       const {data} = await axios.get(`${baseURL}/user/${amazonUserSub}/getCards`);
       this.setState({cards: data.cards, shouldRefresh: true});
     } catch (err) {
-      this.setState({errorMessage: err.response.data.error});
+      if (!err.status) {
+        console.log('here');
+        this.setState({ hasNetwork : false, shouldRefresh: true});
+      } else {
+        this.setState({errorMessage: err.response.data.error});
+      }
     }
   }
 
@@ -120,7 +126,10 @@ export default class PaymentMethodsScreen extends Component<Props> {
   );
 
   render() {
-    return (
+    var displayView = null;
+    console.log(this.state.hasNetwork);
+    if (this.state.hasNetwork) {
+      displayView = 
       <ScrollView 
         contentContainerStyle={styles.container}>
         <StatusBar backgroundColor= {secondaryColor} barStyle="dark-content"/>
@@ -143,8 +152,16 @@ export default class PaymentMethodsScreen extends Component<Props> {
           <Image style={{tintColor: turquoise, marginHorizontal: 15}} source={require('./img/stripe/icon_add.png')} />
           <Text> Add New Card... </Text>
       </TouchableOpacity>
-      </ScrollView>
-    );
+      </ScrollView>;
+    } else {
+      displayView = 
+      <View style={styles.container}>
+        <Image style={{height: 100, width: 100, marginVertical: 15}} source={require('./img/ic_network_error.png')}/>
+        <Text>Please make sure that you have network connection</Text>
+      </View>;
+    }
+
+    return (displayView);
   }
 }
 

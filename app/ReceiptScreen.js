@@ -22,7 +22,8 @@ export default class ReceiptScreen extends Component<Props> {
     this.state = {
       errMessage: '',
       refreshing: false,
-      myOrders: []
+      myOrders: [],
+      hasNetwork: true
     };
   }
 
@@ -41,10 +42,11 @@ export default class ReceiptScreen extends Component<Props> {
       const myOrders = 
         data.orders.filter(order => order.buyers.map(buyer => buyer.amazonUserSub).includes(amazonUserSub));
 
-      console.log(myOrders);
-
       this.setState({myOrders});
     } catch (err) {
+      if (!err.status) {
+        this.setState({hasNetwork: false});
+      }
       console.log(err);
       this.setState({errMessage: err.message});
     }
@@ -84,7 +86,9 @@ export default class ReceiptScreen extends Component<Props> {
   
     const { order } = this.props.navigation.state.params;
 
-    return (
+    var displayView = null;
+    if (this.state.hasNetwork) {
+      displayView = 
       <View style={styles.container}>
         <View style={styles.headerContainer}>
           <Image style={styles.restaurantIcon} source={{uri: order.imageUrl}}/>
@@ -127,8 +131,16 @@ export default class ReceiptScreen extends Component<Props> {
               </Text>
             </View>
         </View>
-      </View>
-    );
+      </View>;
+    } else {
+      displayView = 
+      <View style={styles.errorContainer}>
+        <Image style={{height: 100, width: 100, marginVertical: 15}} source={require('./img/ic_network_error.png')}/>
+        <Text>Please make sure that you have network connection</Text>
+      </View>;
+    }
+
+    return (displayView);
   }
 }
 
@@ -186,6 +198,13 @@ const styles = StyleSheet.create({
   },
   bigText: {
     fontSize: 15,
+  },
+  errorContainer: {
+    flex:1, 
+    justifyContent: 'flex-start', 
+    alignItems: 'center', 
+    flexDirection: 'column',
+    backgroundColor: 'white'
   },
   restaurantIcon: {
       marginTop: 15,

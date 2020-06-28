@@ -17,7 +17,8 @@ export default class InformationScreen extends Component<Props> {
 
     this.state = {
         sections: [],
-        url
+        url,
+        hasNetwork: true
     };
   }
 
@@ -59,6 +60,9 @@ export default class InformationScreen extends Component<Props> {
       const {data} = await axios.get(`${baseURL}/user/${this.state.url}`);
       this.setState({sections: data.sections});
     } catch(err) {
+      if (!err.status) {
+        this.setState({hasNetwork: false});
+      }
       console.log(err);
     }
     
@@ -82,46 +86,54 @@ export default class InformationScreen extends Component<Props> {
               <Image style={{height: 30, width: 30, marginLeft: 10}} source={require('./img/cancelbtn.png')}/>
           </TouchableOpacity>
         </View>
-        <ScrollView>
-          <Text style={styles.header}> {title} </Text>
-          {this.state.sections.map((section, topIndex) => (
-              <View key={topIndex} >
-                <Text style={styles.sectionHeader}>{section.header}</Text>
-                {section.paragraph.map((part, index) => {
-                  if (part.type === 'bullet') {
-                    if (part.content.indexOf('.') !== -1) {
-                      return ( 
-                        <Text style={styles[part.type]} key={index} >
-                          <Text style={{fontWeight: 'bold'}}>{part.content.substr(0, part.content.indexOf('.'))}</Text>
-                          <Text>{part.content.substr(part.content.indexOf('.'))}</Text>
-                        </Text>
-                      );
-                    }
-                  }
-                  return <Text style={styles[part.type]} key={index} >{part.content}</Text>;
-                })}
-                {section.sections === undefined ? null : section.sections.map((subSection, topIndex) => (
-                  <View key={topIndex}>
-                    <Text style={styles.subSectionHeader}>{subSection.header}</Text>
-                    {subSection.paragraph.map((part, index) => {
-                      if (part.type === 'bullet') {
+
+        {this.state.hasNetwork ? 
+          <ScrollView>
+            <Text style={styles.header}> {title} </Text>
+            {this.state.sections.map((section, topIndex) => (
+                <View key={topIndex} >
+                  <Text style={styles.sectionHeader}>{section.header}</Text>
+                  {section.paragraph.map((part, index) => {
+                    if (part.type === 'bullet') {
                       if (part.content.indexOf('.') !== -1) {
-                          return ( 
-                            <Text style={styles[part.type]} key={index}>
-                              <Text style={{fontWeight: 'bold'}}>{part.content.substr(0, part.content.indexOf('.'))}</Text>
-                              <Text>{part.content.substr(part.content.indexOf('.'))}</Text>
-                            </Text>
-                          );
-                        }
+                        return ( 
+                          <Text style={styles[part.type]} key={index} >
+                            <Text style={{fontWeight: 'bold'}}>{part.content.substr(0, part.content.indexOf('.'))}</Text>
+                            <Text>{part.content.substr(part.content.indexOf('.'))}</Text>
+                          </Text>
+                        );
                       }
-                      return <Text style={styles[part.type]} key={index}>{part.content}</Text>;
-                    })}
-                  </View>
-                ))}
-              </View>
-            )
-          )}
-        </ScrollView>
+                    }
+                    return <Text style={styles[part.type]} key={index} >{part.content}</Text>;
+                  })}
+                  {section.sections === undefined ? null : section.sections.map((subSection, topIndex) => (
+                    <View key={topIndex}>
+                      <Text style={styles.subSectionHeader}>{subSection.header}</Text>
+                      {subSection.paragraph.map((part, index) => {
+                        if (part.type === 'bullet') {
+                        if (part.content.indexOf('.') !== -1) {
+                            return ( 
+                              <Text style={styles[part.type]} key={index}>
+                                <Text style={{fontWeight: 'bold'}}>{part.content.substr(0, part.content.indexOf('.'))}</Text>
+                                <Text>{part.content.substr(part.content.indexOf('.'))}</Text>
+                              </Text>
+                            );
+                          }
+                        }
+                        return <Text style={styles[part.type]} key={index}>{part.content}</Text>;
+                      })}
+                    </View>
+                  ))}
+                </View>
+              )
+            )}
+          </ScrollView>
+          : 
+          <View style={{alignItems: 'center'}}>
+            <Image style={{height: 100, width: 100, marginVertical: 15}} source={require('./img/ic_network_error.png')}/>
+            <Text>Please make sure that you have network connection</Text>
+          </View>
+        }
       </SafeAreaView>
     );
     

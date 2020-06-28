@@ -26,6 +26,7 @@ import { Analytics } from 'aws-amplify';
         loyaltyPoints: [],
         isLoaded: false,
         refreshing: false,
+        hasNetwork: true
       };
 
       this.onRefresh = this.onRefresh.bind(this);
@@ -50,11 +51,11 @@ import { Analytics } from 'aws-amplify';
       );
     }
 
-    componentWillUnmount() {
-      if (this.willFocusSubscription !== undefined) {
-        this.willFocusSubscription.remove();
-      }
-    }
+    // componentWillUnmount() {
+    //   if (this.willFocusSubscription !== undefined) {
+    //     this.willFocusSubscription.remove();
+    //   }
+    // }
 
     static navigationOptions = ({navigation}) => {
       return{
@@ -94,6 +95,9 @@ import { Analytics } from 'aws-amplify';
         });
       } catch (err) {
         console.log(err);
+        if (!err.status) {
+          this.setState({hasNetwork: false});
+        }
         this.setState({isLoaded: true});
       }
     }
@@ -188,9 +192,14 @@ import { Analytics } from 'aws-amplify';
       }
 
       return (
+        this.state.hasNetwork ?
         <View style={styles.container}>
           <StatusBar backgroundColor={secondaryColor} barStyle={'dark-content'}/>
           {userRewardsView}
+        </View> :
+        <View style={[styles.container, {alignItems: 'center'}]}>
+          <Image style={{height: 100, width: 100, marginVertical: 15}} source={require('./img/ic_network_error.png')}/>
+          <Text>Please make sure that you have network connection</Text>
         </View>
         );
     }

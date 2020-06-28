@@ -66,7 +66,9 @@ export default class ConfirmationScreen extends Component<Props> {
       refresh: false,
       remainingBalance: 0, 
       dialogVisible: false,
-      selectedCard: {_id:'', last4Digits: 0, selected:false, type:''}
+      selectedCard: {_id:'', last4Digits: 0, selected:false, type:''},
+      hasNetwork: true,
+      errorDialogVisible: false
     };
   }
 
@@ -132,7 +134,7 @@ export default class ConfirmationScreen extends Component<Props> {
         });
         this.setState({selectedCard});
       } catch (err) {
-        this.setState({errorMessage: err.response.data.error});
+        this.setState({hasNetwork: false});
       }
   }
 
@@ -273,13 +275,23 @@ export default class ConfirmationScreen extends Component<Props> {
       });
     } catch (err) {
       console.log(err);
+      var actionType = '';
+      this.setState({errorDialogVisible: true});
       if (err.response.status == 503) {
         // agent offline, ask waiter
+        actionType = 'payAgentOffline';
       } else if (err.response.status == 400) {
        // card has been charged, ask waiter
+       actionType = 'payCardHasAlreadyBeenCharged';
       } else if (err.response.status == 500) {
         // please try again
+        actionType = 'payOtherError';
       }
+
+      Analytics.record({
+        name: 'action',
+        attributes: {page: 'confirmation', actionType}
+      });
     }
     
   }
@@ -289,8 +301,10 @@ export default class ConfirmationScreen extends Component<Props> {
     
     const {shouldPayRemainder} = this.props.navigation.state.params;
 
-    return (
-      <View style={styles.container} resizeMode='contain'>
+    var displayView = null;
+    if (this.state.hasNetwork) {
+      displayView = 
+        <View style={styles.container} resizeMode='contain'>
       <View style={{flex: 1, justifyContent: 'flex-start', flexDirection: 'column', height:screenHeight, width:screenWidth}}>
         <Text style={styles.restaurantText}>{this.state.restaurantName}</Text>
           <TouchableOpacity style={styles.totalContainer} 
@@ -373,8 +387,20 @@ export default class ConfirmationScreen extends Component<Props> {
           <Dialog.Button label="Cancel" onPress={()=> { this.setState({ dialogVisible: false });}} />
           <Dialog.Button label="Enter" onPress={()=> {this._enterCustomTip();}} />
         </Dialog.Container>
-      </View>
-    );
+        <Dialog.Container visible={this.state.errorDialogVisible}>
+            <Dialog.Description>A network error has occurred. Please try again. </Dialog.Description>
+            <Dialog.Button label="Dismiss" onPress={()=> { this.setState({ errorDialogVisible: false });}} />
+        </Dialog.Container>
+      </View>;
+    } else {
+      displayView = 
+      <View style={styles.container}>
+        <Image style={{height: 100, width: 100, marginVertical: 15}} source={require('./img/ic_network_error.png')}/>
+        <Text>Please make sure that you have network connection</Text>
+      </View>;
+    }
+
+    return (displayView);
   }
 }
 
