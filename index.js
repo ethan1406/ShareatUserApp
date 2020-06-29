@@ -31,6 +31,7 @@ Amplify.configure({
             appId: '65b7dc1dd6bc4cff9af0bc42760758e0',
             // OPTIONAL -  Amazon service region
             region: 'us-east-1',
+            optOut: 'NONE'
         }
     },
     Storage: {

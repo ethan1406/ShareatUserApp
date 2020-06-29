@@ -32,6 +32,8 @@ class QrCodeScreen extends Component<Props> {
   async componentDidMount() {
     const session = await Auth.currentSession();
     const jwt = session.getAccessToken().getJwtToken();
+    const bearerToken = 'Bearer ' + jwt;
+    axios.defaults.headers.common['Authorization'] = bearerToken;
 
     console.log(jwt);
 
@@ -40,28 +42,30 @@ class QrCodeScreen extends Component<Props> {
       attributes: {page: 'qr'}
     });
 
-    const amazonUserSub = await AsyncStorage.getItem('amazonUserSub');
-    const firstName = await AsyncStorage.getItem('firstName');
-        const lastName = await AsyncStorage.getItem('lastName');
+    Analytics.updateEndpoint();
 
-const userInfo = {amazonUserSub, firstName, lastName};
+//     const amazonUserSub = await AsyncStorage.getItem('amazonUserSub');
+//     const firstName = await AsyncStorage.getItem('firstName');
+//         const lastName = await AsyncStorage.getItem('lastName');
 
-    axios.post('https://api.shareatpay.com/party/i7EpAReT/1', {amazonUserSub}).then((response) => {
-      this.props.navigation.navigate('Check', {
-         data: response.data.orders, 
-          restaurantName: response.data.restaurant_name,
-          guestCount: response.data.guest_count,
-          totals: response.data.totals,
-          ticketId: response.data.omnivore_ticket_id,
-          members: response.data.members,
-          partyId: response.data._id,
-          restaurantOmnivoreId: response.data.restaurant_omnivore_id,
-          restaurantAmazonUserSub: response.data.restaurantAmazonUserSub,
-          userInfo: userInfo
-      });
-    }).catch((err) => {
-      console.log(err);
-    });
+// const userInfo = {amazonUserSub, firstName, lastName};
+
+//     axios.post('https://api.shareatpay.com/party/i7EpAReT/1', {amazonUserSub}).then((response) => {
+//       this.props.navigation.navigate('Check', {
+//          data: response.data.orders, 
+//           restaurantName: response.data.restaurant_name,
+//           guestCount: response.data.guest_count,
+//           totals: response.data.totals,
+//           ticketId: response.data.omnivore_ticket_id,
+//           members: response.data.members,
+//           partyId: response.data._id,
+//           restaurantOmnivoreId: response.data.restaurant_omnivore_id,
+//           restaurantAmazonUserSub: response.data.restaurantAmazonUserSub,
+//           userInfo: userInfo
+//       });
+//     }).catch((err) => {
+//       console.log(err);
+//     });
   
   }
 

@@ -11,7 +11,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import Restaurant from './models/Restaurant';
 import {primaryColor, secondaryColor, darkGray} from './Colors';
 import {headerFontSize} from './Dimensions';
-import { Analytics } from 'aws-amplify';
+import { Analytics, Auth } from 'aws-amplify';
 
 
   type Props = {};
@@ -93,6 +93,11 @@ import { Analytics } from 'aws-amplify';
         Promise.all(promises).then((restaurants) =>{
           this.setState({restaurants, refreshing: false});
         });
+
+        const session = await Auth.currentSession();
+        const jwt = session.getAccessToken().getJwtToken();
+        const bearerToken = 'Bearer ' + jwt;
+        axios.defaults.headers.common['Authorization'] = bearerToken;
       } catch (err) {
         console.log(err);
         if (!err.status) {
