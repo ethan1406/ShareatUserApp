@@ -42,7 +42,22 @@ class QrCodeScreen extends Component<Props> {
       attributes: {page: 'qr'}
     });
 
-    Analytics.updateEndpoint();
+    const amazonUserSub = await AsyncStorage.getItem('amazonUserSub');
+    const email = await AsyncStorage.getItem('email');
+
+    /* email and other attributes should have been automatically shared between 
+      Cognito and Pinpoint. It is not working for some reason, so we have to 
+      manually update the endpoint with emails.
+    */
+    Analytics.updateEndpoint({
+        address: email, 
+        channelType: 'EMAIL',
+        optOut: 'NONE',
+        userId: amazonUserSub
+    });
+
+
+
 
 //     const amazonUserSub = await AsyncStorage.getItem('amazonUserSub');
 //     const firstName = await AsyncStorage.getItem('firstName');

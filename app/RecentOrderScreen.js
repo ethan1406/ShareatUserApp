@@ -100,40 +100,48 @@ export default class RecentOrderScreen extends Component<Props> {
 
     var displayView = null;
     if (this.state.hasNetwork) {
-      displayView = 
-      <ScrollView resizeMode='contain' refreshControl={
-          <RefreshControl tintColor={primaryColor} colors={[primaryColor]} refreshing={this.state.refreshing} onRefresh={this.onRefresh} />}
-          contentContainerStyle={styles.container} style={{backgroundColor: 'white'}}>
-        <Text style={styles.placeholderText}/>
-        {this.state.recentOrders.map((order, index) => {
-           const date = new Date(order.timeOfOrder);
-           var hours = date.getHours();
-           const pmAm = hours < 12 ? 'am' : 'pm';
-           if(hours > 12) {
-              hours -= 12;
-           }
-           return (
-            <View style={styles.rewardContainer} key={index} >
-              <TouchableOpacity key={index} style={{flexDirection:'row', width: '80%'}}
-                onPress={()=> this._lookupReceipt(order)}>
-                <Image style={styles.restaurantIcon} source={{uri: order.imageUrl}}/>
-                <View>
-                <Text style={{marginBottom: 3, marginRight: 15}}>{order.restaurantName} </Text>
-                <Text style={{color: 'gray', marginBottom: 3, marginRight: 15, fontSize: 12}}>{order.address}</Text>
-                {
-                    order.timeOfOrder != undefined ?
-                    <Text style={{color: 'gray', marginBottom: 15}}>
-                        {date.getMonth()+1}/{date.getDate()}/{date.getFullYear()} at {hours}:{date.getMinutes()} {pmAm}
-                    </Text> : null
-                }
-                </View>
-              </TouchableOpacity>
-              {index == this.state.recentOrders.length - 1 ? null : <View style={styles.separator}/>}
-            </View>
-            ); 
-          })
-        }
-      </ScrollView>;
+
+      if (this.state.recentOrders.length == 0) {
+        displayView = 
+        <View style={styles.noOrderView}>
+            <Text style={styles.noOrderText}>You have no recent orders currently.</Text>
+        </View>;
+      } else {
+        displayView = 
+        <ScrollView resizeMode='contain' refreshControl={
+            <RefreshControl tintColor={primaryColor} colors={[primaryColor]} refreshing={this.state.refreshing} onRefresh={this.onRefresh} />}
+            contentContainerStyle={styles.container} style={{backgroundColor: 'white'}}>
+          <Text style={styles.placeholderText}/>
+          {this.state.recentOrders.map((order, index) => {
+             const date = new Date(order.timeOfOrder);
+             var hours = date.getHours();
+             const pmAm = hours < 12 ? 'am' : 'pm';
+             if(hours > 12) {
+                hours -= 12;
+             }
+             return (
+              <View style={styles.rewardContainer} key={index} >
+                <TouchableOpacity key={index} style={{flexDirection:'row', width: '80%'}}
+                  onPress={()=> this._lookupReceipt(order)}>
+                  <Image style={styles.restaurantIcon} source={{uri: order.imageUrl}}/>
+                  <View>
+                  <Text style={{marginBottom: 3, marginRight: 15}}>{order.restaurantName} </Text>
+                  <Text style={{color: 'gray', marginBottom: 3, marginRight: 15, fontSize: 12}}>{order.address}</Text>
+                  {
+                      order.timeOfOrder != undefined ?
+                      <Text style={{color: 'gray', marginBottom: 15}}>
+                          {date.getMonth()+1}/{date.getDate()}/{date.getFullYear()} at {hours}:{date.getMinutes()} {pmAm}
+                      </Text> : null
+                  }
+                  </View>
+                </TouchableOpacity>
+                {index == this.state.recentOrders.length - 1 ? null : <View style={styles.separator}/>}
+              </View>
+              ); 
+            })
+          }
+        </ScrollView>;
+      }
     } else {
       displayView =
       <View style={[styles.container, {alignItems: 'center'}]}>
@@ -159,6 +167,18 @@ const styles = StyleSheet.create({
     marginTop: 5,
     marginBottom: 10,
     width: '90%'
+  },
+  noOrderView: {
+    alignSelf: 'center',
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'white'
+  },
+  noOrderText: {
+    color: darkGray,
+    fontSize: 17,
+    textAlign: 'center',
+    marginTop: 30
   },
   restaurantIcon: {
     marginTop: 7,
