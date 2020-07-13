@@ -16,8 +16,8 @@ class LoginScreen extends Component<Props> {
   constructor(props) {
     super(props);
     this.state = { 
-      email: 'ethan1406@gmail.com',
-      pwd: 'Testing123',
+      email: '',
+      pwd: '',
       errorMessage: '',
       confirmationCode: '',
       resendCodeText: 'Resend One-Time Password',

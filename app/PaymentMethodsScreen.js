@@ -127,7 +127,6 @@ export default class PaymentMethodsScreen extends Component<Props> {
 
   render() {
     var displayView = null;
-    console.log(this.state.hasNetwork);
     if (this.state.hasNetwork) {
       displayView = 
       <ScrollView 

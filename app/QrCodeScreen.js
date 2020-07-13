@@ -35,8 +35,6 @@ class QrCodeScreen extends Component<Props> {
     const bearerToken = 'Bearer ' + jwt;
     axios.defaults.headers.common['Authorization'] = bearerToken;
 
-    //console.log(jwt);
-
     Analytics.record({
       name: 'pageView',
       attributes: {page: 'qr'}

@@ -4,7 +4,7 @@ import React, {Component} from 'react';
 import {StyleSheet, Text, View, Image, TouchableOpacity, ImageBackground, StatusBar} from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-community/async-storage';
-import {primaryColor, secondaryColor, darkGray} from './Colors';
+import {primaryColor, darkGray} from './Colors';
 
 import { Auth } from 'aws-amplify';
 

@@ -72,8 +72,6 @@ class SignupScreen extends Component<Props> {
     const lastName = this.state.lastName.trim();
     const pwd = this.state.pwd.trim();
     const confirmPwd = this.state.confirmPwd.trim();
-
-    console.log(email);
    
     if(!this._passwordReqVerification(email, firstName, lastName, pwd, confirmPwd)) {
       return;
@@ -103,7 +101,6 @@ class SignupScreen extends Component<Props> {
 
       this.setState({errorMessage: ''});
       try {
-        console.log(this.state.email);
         await Auth.confirmSignUp(this.state.email, this.state.confirmationCode);
         const user = await Auth.signIn(this.state.email, this.state.pwd);
         this._attachAuthorizationHeaderToAxios();
@@ -128,7 +125,6 @@ class SignupScreen extends Component<Props> {
    }
 
    async _saveUserToDB(attributes) {
-    console.log(attributes.email);
       try {
          await axios.post(baseURL + '/user/signup/', 
                 {email: attributes.email, amazonUserSub: attributes.sub}
