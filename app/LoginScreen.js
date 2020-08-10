@@ -174,9 +174,11 @@ class LoginScreen extends Component<Props> {
 
       resendBtn = 
             <View style={{marginBottom: 30}} resizeMode='contain'>
-              <TouchableOpacity style={[{flexDirection:'row', alignItems: 'center'}]} onPress={facebookSignIn}>
-                 <Image style={{height: 40, width: 40, }} source={require('./img/facebook.png')} />
-                 <Text style={{color: '#3b5998', marginBottom: 20, marginTop: 20}}> Log in with Facebook </Text>
+              <TouchableOpacity onPress={()=> Auth.federatedSignIn({ provider: 'SignInWithApple'})}>
+                  <Image style={[styles.thirdPartyBtn, {marginTop: -10}]} source={require('./img/continue_apple.png')} />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={facebookSignIn}>
+                 <Image style={[styles.thirdPartyBtn, {marginTop: -10, marginBottom: -20}]} source={require('./img/continue_fb.png')} />
               </TouchableOpacity>
             </View>;
 
@@ -330,6 +332,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#ffa91f',
     paddingTop: 15,
+  },
+  thirdPartyBtn: {
+    alignItems: 'center', 
+    resizeMode: 'contain',
+    width: 220,
   }
 });
 

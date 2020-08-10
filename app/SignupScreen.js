@@ -149,7 +149,7 @@ class SignupScreen extends Component<Props> {
     let resendBtn;
 
     const {
-      facebookSignIn,
+      facebookSignIn
     } = this.props;
 
     if(!isSubmitted) {
@@ -172,9 +172,15 @@ class SignupScreen extends Component<Props> {
             </View>;
 
       resendBtn = 
-            <TouchableOpacity onPress={facebookSignIn}>
-              <Image style={styles.facebook} source={require('./img/continue_fb.png')} />
-            </TouchableOpacity>;
+            <View>
+              <TouchableOpacity onPress={()=> Auth.federatedSignIn({ provider: 'SignInWithApple'})}>
+                  <Image style={styles.facebook} source={require('./img/continue_apple.png')} />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={facebookSignIn}>
+                  <Image style={styles.facebook} source={require('./img/continue_fb.png')} />
+              </TouchableOpacity>
+            </View>;
+          
     } else {
        form = <View style={styles.textInputContainer}>
                 <TextInput style={styles.textInput} multiline={false} secureTextEntry={true}
@@ -318,7 +324,6 @@ const styles = StyleSheet.create({
   },
   signupBtn: {
     marginTop: 35,
-    marginBottom: 10,
     width: '80%',
     height: 45,
     backgroundColor: '#ffa91f',
@@ -367,6 +372,7 @@ const styles = StyleSheet.create({
     alignItems: 'center', 
     resizeMode: 'contain',
     width: 220,
+    marginBottom: -15
   }
 });
 
